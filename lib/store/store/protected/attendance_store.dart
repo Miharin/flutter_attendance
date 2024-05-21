@@ -42,18 +42,19 @@ class AttendanceStore extends GetxController {
       await query.then((datas) {
         for (var data in datas.docs) {
           for (var timestamp in data["timestamp"]) {
-            final dateNow = DateFormat("yyyy-MM-dd").format(DateTime.now());
-            final date = DateFormat("yyyy-MM-dd")
-                .format(DateTime.parse(timestamp["datetime"]));
-            if (date == dateNow && timestamp["type"] == "Check In") {
-              isCheckIn.value = true;
-              datetimeIn.value = timestamp["datetime"];
-            } else if (date == dateNow && timestamp["type"] == "Check Out") {
-              isCheckOut.value = true;
-              datetimeOut.value = timestamp["datetime"];
+            if (timestamp["datetime"] != "") {
+              final dateNow = DateFormat("yyyy-MM-dd").format(DateTime.now());
+              final date = DateFormat("yyyy-MM-dd")
+                  .format(DateTime.parse(timestamp["datetime"]));
+              if (date == dateNow && timestamp["type"] == "Check In") {
+                isCheckIn.value = true;
+                datetimeIn.value = timestamp["datetime"];
+              } else if (date == dateNow && timestamp["type"] == "Check Out") {
+                isCheckOut.value = true;
+                datetimeOut.value = timestamp["datetime"];
+              }
+              indexStatus.value = timestamp["alasan"];
             }
-            indexStatus.value = timestamp["alasan"];
-            indexAlasan.value = timestamp["status_outside"];
           }
         }
       });
@@ -78,38 +79,51 @@ class AttendanceStore extends GetxController {
     }
   }
 
-  addToDatabase(RxMap<String, dynamic> timestampData) async {
-    final AttendanceHelper helper = Get.put(AttendanceHelper());
-    if (timestampData["timestamp"]["status"] == "Outside Workplace") {
-      indexStatus.value = index.value == 0 ? "Sakit" : "Ijin";
-      timestampData["timestamp"]["status_outside"] = indexStatus.value;
-      timestampData["timestamp"]["alasan"] =
-          index.value == 0 ? indexStatus.value : indexAlasan.value;
-    }
-    print(timestampData);
-    final timestamp = db.collection("Timestamp");
-    final queryTimestamp =
-        timestamp.where("name", isEqualTo: timestampData["name"]).get();
-    await queryTimestamp.then((timestamp) {
-      if (timestamp.docs.isEmpty) {
-        db.collection("Timestamp").doc().set({
-          "name": timestampData["name"],
-          "last_edit": Timestamp.now(),
-          "timestamp": [timestampData["timestamp"]]
-        }).onError(
-            (error, stackTrace) => print("Error Writing Document: $error"));
-      } else {
-        for (var data in timestamp.docs) {
-          db.collection("Timestamp").doc(data.id).update({
-            "last_edit": Timestamp.now(),
-            "timestamp": FieldValue.arrayUnion(
-              [timestampData["timestamp"]],
-            )
-          }).onError(
-              (error, stackTrace) => print("Error Writing Document: $error"));
-        }
+  addToDatabase(RxMap<String, dynamic> timestampData, String label) async {
+    if (isCheckIn.value || isCheckOut.value) {
+      Get.snackbar("Sudah $label", "");
+    } else {
+      if (label == "Check In") {
+        datetimeIn.value =
+            DateFormat("yyyy-MM-dd hh:mm:ss").format(DateTime.now()).toString();
+        timestampData["timestamp"]["datetime"] = datetimeIn.value;
+        isCheckIn.value = true;
+      } else if (label == "Check Out") {
+        datetimeOut.value =
+            DateFormat("yyyy-MM-dd hh:mm:ss").format(DateTime.now()).toString();
+        timestampData["timestamp"]["datetime"] = datetimeOut.value;
+        isCheckOut.value = true;
       }
-    });
-    helper.isLoading.value = false;
+      final AttendanceHelper helper = Get.put(AttendanceHelper());
+      if (timestampData["timestamp"]["status"] == "Outside Workplace") {
+        indexStatus.value = "Ijin";
+        timestampData["timestamp"]["status_outside"] = indexStatus.value;
+        timestampData["timestamp"]["alasan"] = indexAlasan.value;
+      }
+      final timestamp = db.collection("Timestamp");
+      final queryTimestamp =
+          timestamp.where("name", isEqualTo: timestampData["name"]).get();
+      await queryTimestamp.then((timestamp) {
+        if (timestamp.docs.isEmpty) {
+          db.collection("Timestamp").doc().set({
+            "name": timestampData["name"],
+            "last_edit": Timestamp.now(),
+            "timestamp": [timestampData["timestamp"]]
+          }).onError((error, stackTrace) =>
+              debugPrint("Error Writing Document: $error"));
+        } else {
+          for (var data in timestamp.docs) {
+            db.collection("Timestamp").doc(data.id).update({
+              "last_edit": Timestamp.now(),
+              "timestamp": FieldValue.arrayUnion(
+                [timestampData["timestamp"]],
+              )
+            }).onError((error, stackTrace) =>
+                debugPrint("Error Writing Document: $error"));
+          }
+        }
+      });
+      helper.isLoading.value = false;
+    }
   }
 }

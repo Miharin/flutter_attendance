@@ -59,7 +59,7 @@ class AttendanceScreen extends GetView<AttendanceController> {
           AnimatedCrossFade(
               firstChild: mobileScreen(),
               secondChild: desktopScreen(),
-              crossFadeState: MediaQuery.of(context).size.width > 700
+              crossFadeState: MediaQuery.of(context).size.width > 800
                   ? CrossFadeState.showSecond
                   : CrossFadeState.showFirst,
               duration: const Duration(milliseconds: 500)),
@@ -75,36 +75,34 @@ class AttendanceScreen extends GetView<AttendanceController> {
         Flexible(
           child: CustomCardWithHeader(
             header: "Checkin",
-            children: Column(
-              children: [
-                Obx(
-                  () => Text(
-                    controller.store.datetimeIn.value,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+            children: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Obx(
+                () => Text(
+                  controller.store.datetimeIn.value,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ),
         Flexible(
           child: CustomCardWithHeader(
             header: "Checkout",
-            children: Column(
-              children: [
-                Obx(
-                  () => Text(
-                    controller.store.datetimeOut.value,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+            children: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Obx(
+                () => Text(
+                  controller.store.datetimeOut.value,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                )
-              ],
+                ),
+              ),
             ),
           ),
         ),
@@ -115,25 +113,12 @@ class AttendanceScreen extends GetView<AttendanceController> {
             children: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Obx(
-                () => Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      controller.store.indexStatus.value.capitalize!,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Gap(5.0),
-                    Text(
-                      controller.store.indexAlasan.value,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                () => Text(
+                  controller.store.indexStatus.value,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -149,11 +134,13 @@ class AttendanceScreen extends GetView<AttendanceController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Flexible(
-          child: CustomCardWithHeader(
-            header: "Checkin",
-            children: Column(
-              children: [
-                Obx(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 150.0),
+            child: CustomCardWithHeader(
+              header: "Checkin",
+              children: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Obx(
                   () => Text(
                     controller.store.datetimeIn.value,
                     style: const TextStyle(
@@ -162,16 +149,18 @@ class AttendanceScreen extends GetView<AttendanceController> {
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ),
         Flexible(
-          child: CustomCardWithHeader(
-            header: "Checkout",
-            children: Column(
-              children: [
-                Obx(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 150.0),
+            child: CustomCardWithHeader(
+              header: "Checkout",
+              children: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Obx(
                   () => Text(
                     controller.store.datetimeOut.value,
                     style: const TextStyle(
@@ -179,37 +168,29 @@ class AttendanceScreen extends GetView<AttendanceController> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                )
-              ],
+                ),
+              ),
             ),
           ),
         ),
         Flexible(
-          child: CustomCardWithHeader(
-            isGap: false,
-            header: "Lain-Nya",
-            children: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Obx(
-                () => Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      controller.store.indexStatus.value.capitalize!,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 150.0),
+            child: CustomCardWithHeader(
+              isGap: false,
+              header: "Lain-Nya",
+              children: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Obx(
+                    () => Text(
+                      controller.store.indexStatus.value,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const Gap(5.0),
-                    Text(
-                      controller.store.indexAlasan.value,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),

@@ -8,7 +8,6 @@ import 'package:flutter_attendance/widgets/templates/inputs/text_form_field.dart
 import 'package:gap/gap.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 class AttendanceHelper extends GetxController {
   final RxBool isLoading = false.obs;
@@ -30,7 +29,6 @@ class AttendanceHelper extends GetxController {
   void onInit() async {
     super.onInit();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      print(cache.read("user")["name"]);
       Geolocator.requestPermission().then((permission) {
         if (permission == LocationPermission.denied ||
             permission == LocationPermission.deniedForever) {
@@ -58,6 +56,7 @@ class AttendanceHelper extends GetxController {
     if (alasan.isNotEmpty) {
       isDisabledButtonSubmit.value = false;
     }
+    return indexAlasan;
   }
 
   handleTimechange(
@@ -67,15 +66,6 @@ class AttendanceHelper extends GetxController {
     isLoading.value = true;
     final AttendanceStore store = Get.put(AttendanceStore());
     final String currentUsername = cache.read("user")["name"];
-    if (label == "Check In") {
-      store.datetimeIn.value =
-          DateFormat("yyyy-MM-dd hh:mm:ss").format(DateTime.now()).toString();
-      store.isCheckIn.value = true;
-    } else if (label == "Check Out") {
-      store.datetimeOut.value =
-          DateFormat("yyyy-MM-dd hh:mm:ss").format(DateTime.now()).toString();
-      store.isCheckOut.value = true;
-    }
     final bool isInside = await GeoFencing.square(
             listSquareGeoFencing: <SquareGeoFencing>[...store.geoFencingList])
         .isInsideSquareGeoFencing();
@@ -86,25 +76,20 @@ class AttendanceHelper extends GetxController {
     timeStampData["name"] = currentUsername;
     timeStampData["timestamp"]["latitude"] = currentLatitude;
     timeStampData["timestamp"]["longitude"] = currentLongitude;
-    if (label == "Check In") {
-      timeStampData["timestamp"]["datetime"] = store.datetimeIn.value;
-    } else if (label == "Check Out") {
-      timeStampData["timestamp"]["datetime"] = store.datetimeOut.value;
-    }
     timeStampData["timestamp"]["type"] = label;
     if (!isInside) {
       timeStampData["timestamp"]["status"] = "Outside Workplace";
       timeStampData["timestamp"]["workplace_id"] = "Unknown";
       Get.snackbar("Diluar Tempat Kerja", "");
       if (!context.mounted) return;
-      return widgetOutsideWorkplace(context);
+      return widgetOutsideWorkplace(context, label);
     } else {
       timeStampData["timestamp"]["status"] = "Inside Workplace";
       Get.snackbar("Didalam Tempat Kerja", "");
     }
   }
 
-  Future<dynamic> widgetOutsideWorkplace(context) {
+  Future<dynamic> widgetOutsideWorkplace(context, String label) {
     return showModalBottomSheet(
       constraints: BoxConstraints(
         minWidth: MediaQuery.of(context).size.width,
@@ -127,8 +112,8 @@ class AttendanceHelper extends GetxController {
                         Obx(() => Row(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(2, (int index) {
-                                final List<String> title = ["Sakit", "Ijin"];
+                              children: List.generate(1, (int index) {
+                                final List<String> title = ["Ijin"];
                                 return CustomChoiceChip(
                                   content: title[index],
                                   selected: controller.index.value == index,
@@ -144,18 +129,17 @@ class AttendanceHelper extends GetxController {
                               }),
                             )),
                         const Gap(10.0),
-                        Obx(() => controller.index.value == 1
-                            ? CustomTextFormField(
-                                label: "Alasan",
-                                verification: true,
-                                maxlines: 3,
-                                keyboardType: TextInputType.multiline,
-                                onSave: (value) => handleAlasan(
-                                  value!,
-                                  controller.indexAlasan.value,
-                                ),
-                              )
-                            : const Flexible(child: Text(""))),
+                        CustomTextFormField(
+                          label: "Alasan",
+                          verification: true,
+                          maxlines: 3,
+                          keyboardType: TextInputType.multiline,
+                          onSave: (value) async =>
+                              controller.indexAlasan.value = await handleAlasan(
+                            value!,
+                            controller.indexAlasan.value,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -163,16 +147,12 @@ class AttendanceHelper extends GetxController {
                     bottom: 0,
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: Obx(() => CustomFilledButton(
-                          onPressed: controller.index.value == 1
-                              ? isDisabledButtonSubmit.value
-                                  ? null
-                                  : () {
-                                      Navigator.pop(context);
-                                      controller.addToDatabase(timeStampData);
-                                    }
+                          onPressed: isDisabledButtonSubmit.value
+                              ? null
                               : () {
                                   Navigator.pop(context);
-                                  controller.addToDatabase(timeStampData);
+                                  controller.addToDatabase(
+                                      timeStampData, label);
                                 },
                           label: "Submit",
                         )),
