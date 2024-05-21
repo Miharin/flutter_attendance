@@ -30,6 +30,7 @@ class AttendanceHelper extends GetxController {
   void onInit() async {
     super.onInit();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      print(cache.read("user")["name"]);
       Geolocator.requestPermission().then((permission) {
         if (permission == LocationPermission.denied ||
             permission == LocationPermission.deniedForever) {

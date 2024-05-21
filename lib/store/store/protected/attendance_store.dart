@@ -47,9 +47,13 @@ class AttendanceStore extends GetxController {
                 .format(DateTime.parse(timestamp["datetime"]));
             if (date == dateNow && timestamp["type"] == "Check In") {
               isCheckIn.value = true;
+              datetimeIn.value = timestamp["datetime"];
             } else if (date == dateNow && timestamp["type"] == "Check Out") {
               isCheckOut.value = true;
+              datetimeOut.value = timestamp["datetime"];
             }
+            indexStatus.value = timestamp["alasan"];
+            indexAlasan.value = timestamp["status_outside"];
           }
         }
       });
@@ -78,7 +82,7 @@ class AttendanceStore extends GetxController {
     final AttendanceHelper helper = Get.put(AttendanceHelper());
     if (timestampData["timestamp"]["status"] == "Outside Workplace") {
       indexStatus.value = index.value == 0 ? "Sakit" : "Ijin";
-      timestampData["timestamp"]["statusOutside"] = indexStatus.value;
+      timestampData["timestamp"]["status_outside"] = indexStatus.value;
       timestampData["timestamp"]["alasan"] =
           index.value == 0 ? indexStatus.value : indexAlasan.value;
     }
