@@ -89,14 +89,14 @@ class DrawerMenu extends StatelessWidget {
                     leading: const Icon(Icons.person),
                     title: const Text("Daftar User"),
                     onTap: () {
-                      Get.toNamed("/registered-User");
+                      Get.toNamed("/Tabel_User");
                     },
                   ),
                   ListTile(
                     leading: const Icon(Icons.person_add),
                     title: const Text("Pendaftaran User"),
                     onTap: () {
-                      Get.toNamed("/register-user");
+                      Get.toNamed("/Register_User");
                     },
                   ),
                 ],
@@ -111,14 +111,14 @@ class DrawerMenu extends StatelessWidget {
                     leading: const Icon(Icons.location_city_rounded),
                     title: const Text("Lokasi Terdaftar"),
                     onTap: () {
-                      Get.toNamed("/registered-location");
+                      Get.toNamed("/Tabel_Tempat");
                     },
                   ),
                   ListTile(
                     leading: const Icon(Icons.app_registration_rounded),
                     title: const Text("Pendaftaran Tempat"),
                     onTap: () {
-                      Get.toNamed("/register-place");
+                      Get.toNamed("/Register_Place");
                     },
                   ),
                 ],
