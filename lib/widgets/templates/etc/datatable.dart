@@ -39,7 +39,15 @@ class CustomDataTable extends StatelessWidget {
               cells: List.generate(
                 title.length,
                 (index) {
-                  print(e[title]);
+                  if (title[index] == "password") {
+                    final password =
+                        List.generate(e[title[index]].length, (index) => "*")
+                            .toList()
+                            .join();
+                    return DataCell(
+                      Text(password),
+                    );
+                  }
                   return DataCell(
                     Text(e[title[index]] ?? ""),
                   );

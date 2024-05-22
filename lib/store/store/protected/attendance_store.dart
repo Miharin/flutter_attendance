@@ -123,6 +123,7 @@ class AttendanceStore extends GetxController {
         if (timestamp.docs.isEmpty) {
           db.collection("Timestamp").doc().set({
             "name": timestampData["name"],
+            "year": DateTime.now().year.toString(),
             "last_edit": Timestamp.now(),
             "timestamp": [timestampData["timestamp"]]
           }).onError((error, stackTrace) =>
