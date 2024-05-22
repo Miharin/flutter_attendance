@@ -17,6 +17,7 @@ class AttendanceStore extends GetxController {
   ].obs;
   final RxBool isCheckIn = false.obs;
   final RxBool isCheckOut = false.obs;
+  final RxBool isAbsent = false.obs;
   final RxString datetimeIn = "".obs;
   final RxString datetimeOut = "".obs;
   final RxInt index = 0.obs;
@@ -46,14 +47,21 @@ class AttendanceStore extends GetxController {
               final dateNow = DateFormat("yyyy-MM-dd").format(DateTime.now());
               final date = DateFormat("yyyy-MM-dd")
                   .format(DateTime.parse(timestamp["datetime"]));
-              if (date == dateNow && timestamp["type"] == "Check In") {
-                isCheckIn.value = true;
-                datetimeIn.value = timestamp["datetime"];
-              } else if (date == dateNow && timestamp["type"] == "Check Out") {
-                isCheckOut.value = true;
-                datetimeOut.value = timestamp["datetime"];
+              if (date == dateNow) {
+                if (timestamp["type"] == "Check In") {
+                  isCheckIn.value = true;
+                  datetimeIn.value = timestamp["datetime"];
+                  indexStatus.value = timestamp["alasan"];
+                } else if (timestamp["type"] == "Check Out") {
+                  isCheckOut.value = true;
+                  datetimeOut.value = timestamp["datetime"];
+                  indexStatus.value = timestamp["alasan"];
+                } else if (timestamp["type"] == "Lain-Nya") {
+                  isAbsent.value = true;
+                  datetimeIn.value = datetimeOut.value = timestamp["datetime"];
+                  indexStatus.value = timestamp["status"];
+                }
               }
-              indexStatus.value = timestamp["alasan"];
             }
           }
         }
@@ -72,10 +80,6 @@ class AttendanceStore extends GetxController {
           }
         }
       });
-      GeoFencing.square(
-              listSquareGeoFencing: <SquareGeoFencing>[...geoFencingList])
-          .listGeoFencing()
-          .then((value) => print(value));
     }
   }
 
@@ -93,6 +97,14 @@ class AttendanceStore extends GetxController {
             DateFormat("yyyy-MM-dd hh:mm:ss").format(DateTime.now()).toString();
         timestampData["timestamp"]["datetime"] = datetimeOut.value;
         isCheckOut.value = true;
+      } else if (label == "Lain-Nya") {
+        isAbsent.value = true;
+        indexStatus.value = index.value == 0 ? "Sakit" : "Ijin";
+        final datetime =
+            DateFormat("yyyy-MM-dd hh:mm:ss").format(DateTime.now()).toString();
+        datetimeIn.value = datetimeOut.value = datetime;
+        timestampData["timestamp"]["datetime"] = datetime;
+        timestampData["timestamp"]["status"] = indexStatus.value;
       }
       final AttendanceHelper helper = Get.put(AttendanceHelper());
       if (timestampData["timestamp"]["status"] == "Outside Workplace") {
@@ -123,6 +135,7 @@ class AttendanceStore extends GetxController {
           }
         }
       });
+
       helper.isLoading.value = false;
     }
   }

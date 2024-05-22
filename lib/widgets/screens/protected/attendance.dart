@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_attendance/store/controller/attendance_controller.dart';
 import 'package:flutter_attendance/widgets/templates/buttons/filled_button.dart';
 import 'package:flutter_attendance/widgets/templates/etc/card.dart';
-import 'package:flutter_attendance/widgets/templates/buttons/choice_chip.dart';
-import 'package:flutter_attendance/widgets/templates/inputs/text_form_field.dart';
-import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class AttendanceScreen extends GetView<AttendanceController> {
@@ -12,6 +9,23 @@ class AttendanceScreen extends GetView<AttendanceController> {
 
   @override
   Widget build(BuildContext context) {
+    isEnableCheckButton() {
+      if (controller.store.isAbsent.value || controller.store.isCheckIn.value) {
+        return false;
+      } else if (controller.store.isAbsent.value ||
+          controller.store.isCheckOut.value) {
+        return false;
+      } else if (controller.store.isCheckIn.value ||
+          controller.store.isCheckOut.value ||
+          controller.store.isAbsent.value) {
+        return false;
+      } else if (controller.helper.isLoading.value) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -23,8 +37,7 @@ class AttendanceScreen extends GetView<AttendanceController> {
                   Flexible(
                     child: CustomFilledButton(
                       label: "Check In",
-                      onPressed: !controller.store.isCheckIn.value &&
-                              !controller.helper.isLoading.value
+                      onPressed: isEnableCheckButton()
                           ? () => controller.helper.handleTimechange(
                                 "Check In",
                                 context,
@@ -35,8 +48,7 @@ class AttendanceScreen extends GetView<AttendanceController> {
                   Flexible(
                     child: CustomFilledButton(
                       label: "Check Out",
-                      onPressed: !controller.store.isCheckOut.value &&
-                              !controller.helper.isLoading.value
+                      onPressed: isEnableCheckButton()
                           ? () => controller.helper.handleTimechange(
                                 "Check Out",
                                 context,
@@ -46,16 +58,17 @@ class AttendanceScreen extends GetView<AttendanceController> {
                   ),
                 ],
               )),
-          Flexible(
-            child: CustomFilledButton(
-              label: "Lain-Nya",
-              onPressed: !controller.store.isCheckIn.value &&
-                      !controller.store.isCheckOut.value &&
-                      !controller.helper.isLoading.value
-                  ? () => showAlasan(context)
-                  : null,
-            ),
-          ),
+          Obx(() => Flexible(
+                child: CustomFilledButton(
+                  label: "Lain-Nya",
+                  onPressed: isEnableCheckButton()
+                      ? () => controller.helper.handleTimechange(
+                            "Lain-Nya",
+                            context,
+                          )
+                      : null,
+                ),
+              )),
           AnimatedCrossFade(
               firstChild: mobileScreen(),
               secondChild: desktopScreen(),
@@ -197,72 +210,6 @@ class AttendanceScreen extends GetView<AttendanceController> {
           ),
         ),
       ],
-    );
-  }
-
-  Future<dynamic> showAlasan(BuildContext context) {
-    return showModalBottomSheet(
-      constraints: BoxConstraints(
-        minWidth: MediaQuery.of(context).size.width,
-        minHeight: MediaQuery.of(context).size.height * 0.5,
-        maxHeight: MediaQuery.of(context).size.height * 0.5,
-      ),
-      context: context,
-      builder: (BuildContext context) {
-        return Stack(
-          alignment: Alignment.center,
-          fit: StackFit.expand,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  const Text("Alasan"),
-                  Obx(() => Row(
-                        children: List.generate(2, (int index) {
-                          final List<String> title = ["Sakit", "Ijin"];
-                          return CustomChoiceChip(
-                            content: title[index],
-                            selected: controller.store.index.value == index,
-                            onSelected: (bool selected) =>
-                                controller.helper.handleChange(
-                              selected,
-                              index,
-                              controller.store.index.value,
-                              controller.store.indexStatus.value,
-                            ),
-                          );
-                        }),
-                      )),
-                  const Gap(10.0),
-                  Obx(() => controller.store.index.value == 1
-                      ? CustomTextFormField(
-                          label: "Alasan",
-                          verification: true,
-                          maxlines: 3,
-                          keyboardType: TextInputType.multiline,
-                          onSave: (value) => controller.helper.handleAlasan(
-                            value!,
-                            controller.store.indexAlasan.value,
-                          ),
-                        )
-                      : const Flexible(child: Text(""))),
-                ],
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              width: MediaQuery.of(context).size.width * 0.9,
-              child: CustomFilledButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                label: "Submit",
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }

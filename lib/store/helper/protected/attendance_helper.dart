@@ -83,9 +83,13 @@ class AttendanceHelper extends GetxController {
       Get.snackbar("Diluar Tempat Kerja", "");
       if (!context.mounted) return;
       return widgetOutsideWorkplace(context, label);
+    } else if (label == "Lain-Nya") {
+      timeStampData["timestamp"]["workplace_id"] = "Unknown";
+      if (!context.mounted) return;
+      return showAlasan(context, label);
     } else {
       timeStampData["timestamp"]["status"] = "Inside Workplace";
-      Get.snackbar("Didalam Tempat Kerja", "");
+      store.addToDatabase(timeStampData, label);
     }
   }
 
@@ -156,6 +160,76 @@ class AttendanceHelper extends GetxController {
                                 },
                           label: "Submit",
                         )),
+                  ),
+                ],
+              );
+            });
+      },
+    );
+  }
+
+  Future<dynamic> showAlasan(BuildContext context, String label) {
+    return showModalBottomSheet(
+      constraints: BoxConstraints(
+        minWidth: MediaQuery.of(context).size.width,
+        minHeight: MediaQuery.of(context).size.height * 0.5,
+        maxHeight: MediaQuery.of(context).size.height * 0.5,
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        return GetBuilder(
+            init: AttendanceStore(),
+            builder: (controller) {
+              return Stack(
+                alignment: Alignment.center,
+                fit: StackFit.expand,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        const Text("Alasan"),
+                        Obx(() => Row(
+                              children: List.generate(2, (int index) {
+                                final List<String> title = ["Sakit", "Ijin"];
+                                return CustomChoiceChip(
+                                  content: title[index],
+                                  selected: controller.index.value == index,
+                                  onSelected: (bool selected) => handleChange(
+                                    selected,
+                                    index,
+                                    controller.index.value,
+                                    controller.indexStatus.value,
+                                  ),
+                                );
+                              }),
+                            )),
+                        const Gap(10.0),
+                        Obx(() => controller.index.value == 1
+                            ? CustomTextFormField(
+                                label: "Alasan",
+                                verification: true,
+                                maxlines: 3,
+                                keyboardType: TextInputType.multiline,
+                                onSave: (value) => handleAlasan(
+                                  value!,
+                                  controller.indexAlasan.value,
+                                ),
+                              )
+                            : const Flexible(child: Text(""))),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: CustomFilledButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        controller.addToDatabase(timeStampData, label);
+                      },
+                      label: "Submit",
+                    ),
                   ),
                 ],
               );
