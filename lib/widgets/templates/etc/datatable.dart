@@ -33,13 +33,13 @@ class CustomDataTable extends StatelessWidget {
             return DataRow(
               onSelectChanged: (bool? selected) {
                 if (selected! && ontap != null) {
-                  print(true);
                   ontap!();
                 }
               },
               cells: List.generate(
                 title.length,
                 (index) {
+                  print(e[title]);
                   return DataCell(
                     Text(e[title[index]] ?? ""),
                   );

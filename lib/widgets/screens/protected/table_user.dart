@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_attendance/store/helper/protected/table_user_helper.dart';
+import 'package:flutter_attendance/store/controller/table_user_controller.dart';
 import 'package:flutter_attendance/widgets/templates/etc/datatable.dart';
 import 'package:flutter_attendance/widgets/templates/inputs/text_form_field.dart';
 import 'package:get/get.dart';
 
-class TableUser extends StatelessWidget {
-  TableUser({super.key});
-
-  final tableUserHelper = Get.put(TableUserHelper());
+class TableUser extends GetView<TableUserController> {
+  const TableUser({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +18,7 @@ class TableUser extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    tableUserHelper.tableContent.isEmpty
+                    controller.store.tableContent.isEmpty
                         ? const CustomDataTable(
                             title: [
                               "Email",
@@ -39,8 +37,8 @@ class TableUser extends StatelessWidget {
                           )
                         : CustomDataTable(
                             title:
-                                tableUserHelper.tableContent[0].keys.toList(),
-                            datalabel: tableUserHelper.tableContent,
+                                controller.store.tableContent[0].keys.toList(),
+                            datalabel: controller.store.tableContent,
                             ontap: () => showBottomSheet(
                                 context: context,
                                 builder: (BuildContext context) {

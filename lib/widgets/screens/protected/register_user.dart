@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_attendance/store/helper/protected/table_user_helper.dart';
+import 'package:flutter_attendance/store/controller/table_user_controller.dart';
 import 'package:flutter_attendance/widgets/templates/buttons/choice_chip.dart';
 import 'package:flutter_attendance/widgets/templates/buttons/filled_button.dart';
 import 'package:flutter_attendance/widgets/templates/etc/card.dart';
@@ -7,10 +7,8 @@ import 'package:flutter_attendance/widgets/templates/inputs/text_form_field.dart
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-class RegisterUser extends StatelessWidget {
-  RegisterUser({super.key});
-
-  final tableUserHelper = Get.put(TableUserHelper());
+class RegisterUser extends GetView<TableUserController> {
+  const RegisterUser({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,17 +23,17 @@ class RegisterUser extends StatelessWidget {
                 CustomTextFormField(
                   label: "Email",
                   verification: true,
-                  controller: tableUserHelper.controller[0],
+                  controller: controller.helper.controller[0],
                   keyboardType: TextInputType.emailAddress,
-                  onSave: (value) =>
-                      tableUserHelper.handleAddNewtableContent("Email", value),
+                  onSave: (value) => controller.helper
+                      .handleAddNewtableContent("Email", value),
                 ),
                 CustomTextFormField(
                   label: "Password",
                   verification: true,
-                  controller: tableUserHelper.controller[1],
-                  onSave: (value) => tableUserHelper.handleAddNewtableContent(
-                      "Password", value),
+                  controller: controller.helper.controller[1],
+                  onSave: (value) => controller.helper
+                      .handleAddNewtableContent("Password", value),
                 ),
               ],
             ),
@@ -44,33 +42,35 @@ class RegisterUser extends StatelessWidget {
                 CustomTextFormField(
                   label: "Nama",
                   verification: true,
-                  controller: tableUserHelper.controller[2],
+                  controller: controller.helper.controller[2],
                   onSave: (value) =>
-                      tableUserHelper.handleAddNewtableContent("Nama", value),
+                      controller.helper.handleAddNewtableContent("Nama", value),
                 ),
                 CustomTextFormField(
                   label: "No.Telp",
                   verification: true,
-                  controller: tableUserHelper.controller[3],
+                  controller: controller.helper.controller[3],
                   keyboardType: TextInputType.number,
-                  onSave: (value) => tableUserHelper.handleAddNewtableContent(
-                      "No.Telp", value),
+                  onSave: (value) => controller.helper
+                      .handleAddNewtableContent("No.Telp", value),
                 ),
               ],
             ),
             Obx(() => Row(
                   children: List.generate(2, (int index) {
                     final List<String> title = ["Admin", "User"];
-                    return CustomChoiceChip(content: title[index], 
-                    selected: selected, 
-                    onSelected: onSelected)
+                    return CustomChoiceChip(
+                      content: title[index],
+                      selected: true,
+                      onSelected: (value) {},
+                    );
                   }),
                 )),
             const Gap(10.0),
             CustomFilledButton(
               label: "Submit",
               onPressed: () {
-                tableUserHelper.handleSubmitAddDataContent();
+                controller.helper.handleSubmitAddDataContent();
               },
             ),
           ],
