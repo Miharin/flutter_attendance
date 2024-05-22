@@ -83,7 +83,11 @@ class AttendanceStore extends GetxController {
     }
   }
 
-  addToDatabase(RxMap<String, dynamic> timestampData, String label) async {
+  addToDatabase(
+    RxMap<String, dynamic> timestampData,
+    String label,
+    String snackbarTitle,
+  ) async {
     if (isCheckIn.value || isCheckOut.value) {
       Get.snackbar("Sudah $label", "");
     } else {

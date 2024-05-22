@@ -80,20 +80,23 @@ class AttendanceHelper extends GetxController {
     if (!isInside) {
       timeStampData["timestamp"]["status"] = "Outside Workplace";
       timeStampData["timestamp"]["workplace_id"] = "Unknown";
-      Get.snackbar("Diluar Tempat Kerja", "");
       if (!context.mounted) return;
-      return widgetOutsideWorkplace(context, label);
+      return widgetOutsideWorkplace(context, label, "Diluar Tempat Kerja");
     } else if (label == "Lain-Nya") {
       timeStampData["timestamp"]["workplace_id"] = "Unknown";
       if (!context.mounted) return;
-      return showAlasan(context, label);
+      return showAlasan(context, label, "Ijin / Sakit");
     } else {
       timeStampData["timestamp"]["status"] = "Inside Workplace";
-      store.addToDatabase(timeStampData, label);
+      store.addToDatabase(timeStampData, label, "Didalam Tempat Kerja");
     }
   }
 
-  Future<dynamic> widgetOutsideWorkplace(context, String label) {
+  Future<dynamic> widgetOutsideWorkplace(
+    context,
+    String label,
+    String snackbarTitle,
+  ) {
     return showModalBottomSheet(
       constraints: BoxConstraints(
         minWidth: MediaQuery.of(context).size.width,
@@ -156,7 +159,10 @@ class AttendanceHelper extends GetxController {
                               : () {
                                   Navigator.pop(context);
                                   controller.addToDatabase(
-                                      timeStampData, label);
+                                    timeStampData,
+                                    label,
+                                    snackbarTitle,
+                                  );
                                 },
                           label: "Submit",
                         )),
@@ -168,7 +174,11 @@ class AttendanceHelper extends GetxController {
     );
   }
 
-  Future<dynamic> showAlasan(BuildContext context, String label) {
+  Future<dynamic> showAlasan(
+    BuildContext context,
+    String label,
+    String snackbarTitle,
+  ) {
     return showModalBottomSheet(
       constraints: BoxConstraints(
         minWidth: MediaQuery.of(context).size.width,
@@ -226,7 +236,11 @@ class AttendanceHelper extends GetxController {
                     child: CustomFilledButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        controller.addToDatabase(timeStampData, label);
+                        controller.addToDatabase(
+                          timeStampData,
+                          label,
+                          snackbarTitle,
+                        );
                       },
                       label: "Submit",
                     ),
