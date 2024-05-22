@@ -10,6 +10,7 @@ class TableUserHelper extends GetxController {
     "No.Telp": "",
   }.obs;
   final controller = List.generate(5, (index) => TextEditingController());
+  final index = 1.obs;
 
   handleAddNewtableContent(String name, dynamic value) {
     addNewUser[name] = value;

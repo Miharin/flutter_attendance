@@ -56,16 +56,28 @@ class RegisterUser extends GetView<TableUserController> {
                 ),
               ],
             ),
-            Obx(() => Row(
+            CustomCardWithHeader(
+              header: "Role",
+              children: Obx(
+                () => Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(2, (int index) {
                     final List<String> title = ["Admin", "User"];
-                    return CustomChoiceChip(
-                      content: title[index],
-                      selected: true,
-                      onSelected: (value) {},
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: CustomChoiceChip(
+                          content: title[index],
+                          selected: controller.helper.index.value == index,
+                          onSelected: (bool selected) {
+                            if (selected) {
+                              controller.helper.index.value = index;
+                            }
+                          }),
                     );
                   }),
-                )),
+                ),
+              ),
+            ),
             const Gap(10.0),
             CustomFilledButton(
               label: "Submit",
