@@ -9,22 +9,24 @@ class AttendanceScreen extends GetView<AttendanceController> {
 
   @override
   Widget build(BuildContext context) {
-    isEnableCheckButton() {
-      print(controller);
-      if (controller.store.isAbsent.value || controller.store.isCheckIn.value) {
-        return false;
-      } else if (controller.store.isAbsent.value ||
-          controller.store.isCheckOut.value) {
-        return false;
-      } else if (controller.store.isCheckIn.value ||
-          controller.store.isCheckOut.value ||
-          controller.store.isAbsent.value) {
-        return false;
-      } else if (controller.helper.isLoading.value) {
-        return false;
-      } else {
-        return true;
+    isEnableCheckButton(label) {
+      final isLoading = controller.helper.isLoading.value;
+      final isCheckIn = controller.store.isCheckIn.value;
+      final isCheckOut = controller.store.isCheckOut.value;
+      final isAbsent = controller.store.isAbsent.value;
+      switch (label) {
+        case "Check In":
+          if (isLoading || (!isLoading && isCheckIn) || isAbsent) return false;
+          return true;
+        case "Check Out":
+          if (isLoading || (!isLoading && isCheckOut) || isAbsent) return false;
+          return true;
+        case "Lain-Nya":
+          if (isLoading || isAbsent || isCheckIn || isCheckOut) return false;
+          return true;
+        default:
       }
+      return false;
     }
 
     return Padding(
@@ -38,7 +40,7 @@ class AttendanceScreen extends GetView<AttendanceController> {
                   Flexible(
                     child: CustomFilledButton(
                       label: "Check In",
-                      onPressed: isEnableCheckButton()
+                      onPressed: isEnableCheckButton("Check In")
                           ? () => controller.helper.handleTimechange(
                                 "Check In",
                                 context,
@@ -49,7 +51,7 @@ class AttendanceScreen extends GetView<AttendanceController> {
                   Flexible(
                     child: CustomFilledButton(
                       label: "Check Out",
-                      onPressed: isEnableCheckButton()
+                      onPressed: isEnableCheckButton("Check Out")
                           ? () => controller.helper.handleTimechange(
                                 "Check Out",
                                 context,
@@ -62,7 +64,7 @@ class AttendanceScreen extends GetView<AttendanceController> {
           Obx(() => Flexible(
                 child: CustomFilledButton(
                   label: "Lain-Nya",
-                  onPressed: isEnableCheckButton()
+                  onPressed: isEnableCheckButton("Lain-Nya")
                       ? () => controller.helper.handleTimechange(
                             "Lain-Nya",
                             context,

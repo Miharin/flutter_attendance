@@ -91,19 +91,19 @@ class AttendanceStore extends GetxController {
     } else {
       if (label == "Check In") {
         datetimeIn.value =
-            DateFormat("yyyy-MM-dd hh:mm:ss").format(DateTime.now()).toString();
+            DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString();
         timestampData["timestamp"]["datetime"] = datetimeIn.value;
         isCheckIn.value = true;
       } else if (label == "Check Out") {
         datetimeOut.value =
-            DateFormat("yyyy-MM-dd hh:mm:ss").format(DateTime.now()).toString();
+            DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString();
         timestampData["timestamp"]["datetime"] = datetimeOut.value;
         isCheckOut.value = true;
       } else if (label == "Lain-Nya") {
         isAbsent.value = true;
         indexStatus.value = index.value == 0 ? "Sakit" : "Ijin";
         final datetime =
-            DateFormat("yyyy-MM-dd hh:mm:ss").format(DateTime.now()).toString();
+            DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString();
         datetimeIn.value = datetimeOut.value = datetime;
         timestampData["timestamp"]["datetime"] = datetime;
         timestampData["timestamp"]["status"] = indexStatus.value;
@@ -138,6 +138,12 @@ class AttendanceStore extends GetxController {
           }
         }
       });
+      Get.snackbar(
+        "Berhasil ${label == "Lain-Nya" ? "Ijin" : label} Pada ${timestampData["timestamp"]["workplace_id"]}",
+        "Pada Tanggal ${DateFormat("dd MMMM yyyy", "in").format(DateTime.parse(timestampData["timestamp"]["datetime"].split(" ")[0]))} "
+            "Dan Jam ${timestampData["timestamp"]["datetime"].split(" ")[1]}",
+        duration: const Duration(seconds: 7),
+      );
       helper.isLoading.value = false;
     }
   }
