@@ -3,6 +3,7 @@ import 'package:flutter_attendance/widgets/screens/auth/auth_screen.dart';
 import 'package:flutter_attendance/widgets/screens/auth/login_screen.dart';
 import 'package:flutter_attendance/widgets/screens/protected/attendance.dart';
 import 'package:flutter_attendance/widgets/screens/protected/dashboard_screen.dart';
+import 'package:flutter_attendance/widgets/screens/protected/history.dart';
 import 'package:flutter_attendance/widgets/screens/protected/protected_screen.dart';
 import 'package:flutter_attendance/widgets/screens/protected/register_place.dart';
 import 'package:flutter_attendance/widgets/screens/protected/register_user.dart';
@@ -84,6 +85,22 @@ class Routes {
               child: ProtectedScreen(
             title: "Pendaftaran Tempat",
             child: RegisterPlace(),
+          )),
+          secondWidget: const AuthScreen(
+            title: "Login",
+            child: LoginScreen(),
+          ),
+        );
+      },
+    ),
+    GetPage(
+      name: "/History",
+      page: () {
+        return CustomRoutes(
+          firstWidget: DashboardScreen(
+              child: ProtectedScreen(
+            title: "History",
+            child: History(),
           )),
           secondWidget: const AuthScreen(
             title: "Login",
