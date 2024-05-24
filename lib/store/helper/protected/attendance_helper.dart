@@ -77,6 +77,7 @@ class AttendanceHelper extends GetxController {
     timeStampData["timestamp"]["latitude"] = currentLatitude;
     timeStampData["timestamp"]["longitude"] = currentLongitude;
     timeStampData["timestamp"]["type"] = label;
+    isLoading.value = false;
     if (!isInside) {
       timeStampData["timestamp"]["status"] = "Outside Workplace";
       timeStampData["timestamp"]["workplace_id"] = "Unknown";

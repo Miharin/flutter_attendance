@@ -86,7 +86,9 @@ class AttendanceStore extends GetxController {
     String label,
     String snackbarTitle,
   ) async {
-    if (isCheckIn.value || isCheckOut.value) {
+    if (isCheckIn.value && label == "Check In") {
+      Get.snackbar("Sudah $label", "");
+    } else if (isCheckOut.value && label == "Check Out") {
       Get.snackbar("Sudah $label", "");
     } else {
       if (label == "Check In") {

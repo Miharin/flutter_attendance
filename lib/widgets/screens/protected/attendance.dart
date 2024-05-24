@@ -29,6 +29,10 @@ class AttendanceScreen extends GetView<AttendanceController> {
       return false;
     }
 
+    controller.helper.isLoading.value = true;
+    Future.delayed(const Duration(seconds: 3))
+        .then((result) => controller.helper.isLoading.value = false);
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
