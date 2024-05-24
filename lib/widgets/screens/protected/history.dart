@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_attendance/store/controller/history_controller.dart';
 import 'package:flutter_attendance/widgets/templates/etc/datatable.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
 
 class History extends GetView<HistoryController> {
   const History({super.key});
@@ -17,7 +16,7 @@ class History extends GetView<HistoryController> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      controller.store.tableContent.isEmpty
+                      controller.store.userDataCheck.isEmpty
                           ? const CustomDataTable(title: [
                               "name",
                               "dateTime",
@@ -42,9 +41,9 @@ class History extends GetView<HistoryController> {
                               }
                             ])
                           : CustomDataTable(
-                              title: controller.store.tableContent[0].keys
+                              title: controller.store.userDataCheck[0].keys
                                   .toList(),
-                              datalabel: controller.store.tableContent,
+                              datalabel: controller.store.userDataCheck,
                             )
                     ],
                   ),

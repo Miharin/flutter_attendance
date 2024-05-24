@@ -38,11 +38,28 @@ class GeoFencing {
           position.longitude
               .isBetween(geoFencing.longitudeStart, geoFencing.longitudeEnd)) {
         return true;
-      } else {
-        return false;
       }
     }
     return false;
+  }
+
+  Future<Map<String, dynamic>> getDataWorkPlace() async {
+    Position position = await Geolocator.getCurrentPosition();
+    for (var geoFencing in listSquareGeoFencing!) {
+      if (position.latitude
+              .isMinBetween(geoFencing.latitudeStart, geoFencing.latitudeEnd) &&
+          position.longitude
+              .isBetween(geoFencing.longitudeStart, geoFencing.longitudeEnd)) {
+        return {
+          "workplaceId": geoFencing.id,
+          "latitudeStart": geoFencing.latitudeStart,
+          "latitudeEnd": geoFencing.latitudeEnd,
+          "longitudeStart": geoFencing.longitudeStart,
+          "longitudeEnd": geoFencing.longitudeEnd,
+        };
+      }
+    }
+    return {};
   }
 
   Future<List> listGeoFencing() async {

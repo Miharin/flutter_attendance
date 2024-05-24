@@ -88,6 +88,10 @@ class AttendanceHelper extends GetxController {
       return showAlasan(context, label, "Ijin / Sakit");
     } else {
       timeStampData["timestamp"]["status"] = "Inside Workplace";
+      final workplace = await GeoFencing.square(
+              listSquareGeoFencing: <SquareGeoFencing>[...store.geoFencingList])
+          .getDataWorkPlace();
+      timeStampData["timestamp"]["workplace_id"] = workplace["workplaceId"];
       store.addToDatabase(timeStampData, label, "Didalam Tempat Kerja");
     }
   }

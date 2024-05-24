@@ -64,7 +64,7 @@ class TablePlaceStore extends GetxController {
               });
               Get.snackbar(
                 "Berhasil Menyimpan",
-                "Tempat Dengan Nama${addNewTableContent["ID"]} Telah Ditambahkan",
+                "Tempat Dengan Nama ${addNewTableContent["ID"]} Telah Ditambahkan",
               );
             }
           }

@@ -10,6 +10,7 @@ class AttendanceScreen extends GetView<AttendanceController> {
   @override
   Widget build(BuildContext context) {
     isEnableCheckButton() {
+      print(controller);
       if (controller.store.isAbsent.value || controller.store.isCheckIn.value) {
         return false;
       } else if (controller.store.isAbsent.value ||

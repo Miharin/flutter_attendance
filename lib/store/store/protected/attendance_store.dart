@@ -51,7 +51,7 @@ class AttendanceStore extends GetxController {
                 if (timestamp["type"] == "Check In") {
                   isCheckIn.value = true;
                   datetimeIn.value = timestamp["datetime"];
-                  indexStatus.value = timestamp["alasan"];
+                  indexStatus.value = timestamp["alasan"] ?? "";
                 } else if (timestamp["type"] == "Check Out") {
                   isCheckOut.value = true;
                   datetimeOut.value = timestamp["datetime"];
@@ -67,10 +67,8 @@ class AttendanceStore extends GetxController {
         }
       });
       final collectionGeo = db.collection("Place");
-      final queryGeo = collectionGeo
-          .where("workplace", isEqualTo: "Sumber Wringin")
-          .limit(1)
-          .get();
+      final queryGeo =
+          collectionGeo.where("workplace", isEqualTo: "Sumber Wringin").get();
       geoFencingList.value = [];
       await queryGeo.then((places) {
         for (var place in places.docs) {
@@ -140,7 +138,6 @@ class AttendanceStore extends GetxController {
           }
         }
       });
-
       helper.isLoading.value = false;
     }
   }

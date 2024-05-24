@@ -31,11 +31,10 @@ class LoginScreen extends GetView<AuthController> {
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // Header
                     const Header(child: "Login"),
-                    const Gap(10.0),
+                    const Gap(20.0),
 
                     // Email and Password Text Field with Map
                     // textFields,
