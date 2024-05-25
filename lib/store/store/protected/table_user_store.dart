@@ -7,25 +7,6 @@ class TableUserStore extends GetxController {
   final RxList tableTitle = [].obs;
   final RxList tableContent = [].obs;
 
-  @override
-  void onInit() async {
-    super.onInit();
-    final users = db.collection("Users");
-    final query = users.get();
-    await query.then((users) {
-      for (var user in users.docs) {
-        final data = {
-          "email": user.data()["email"],
-          "name": user.data()["name"],
-          "password": user.data()["password"],
-          "role": user.data()["role"],
-          "telp_number": user.data()["telp_number"],
-        };
-        tableContent.add(data);
-      }
-    });
-  }
-
   handleAddToDatabase(Map<String, dynamic> addNewUser) async {
     try {
       await auth

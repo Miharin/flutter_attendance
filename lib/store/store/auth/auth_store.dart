@@ -62,6 +62,7 @@ class AuthStore extends GetxController {
             final userData = UserModel.fromJSON(user.data()!);
 
             // Send to CACHE With Name "User"
+            cache.remove("user");
             cache.write("user", {
               "email": userData.email,
               "name": userData.name,

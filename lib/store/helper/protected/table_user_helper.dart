@@ -8,6 +8,7 @@ class TableUserHelper extends GetxController {
     "Password": "",
     "Nama": "",
     "No.Telp": "",
+    "Role": "",
   }.obs;
   final controller = List.generate(5, (index) => TextEditingController());
   final index = 1.obs;
@@ -21,6 +22,8 @@ class TableUserHelper extends GetxController {
     store.tableContent.add({...addNewUser});
     store.tableContent.refresh();
     store.handleAddToDatabase(addNewUser);
+    addNewUser["Role"] = index == 1 ? "User" : "Admin";
+    print(addNewUser);
     for (var element in controller) {
       element.clear();
     }

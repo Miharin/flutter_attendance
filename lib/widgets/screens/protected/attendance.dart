@@ -1,8 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_attendance/shared/globals.dart';
+import 'package:flutter_attendance/shared/models/square_geofencing_model.dart';
 import 'package:flutter_attendance/store/controller/attendance_controller.dart';
 import 'package:flutter_attendance/widgets/templates/buttons/filled_button.dart';
 import 'package:flutter_attendance/widgets/templates/etc/card.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class AttendanceScreen extends GetView<AttendanceController> {
   const AttendanceScreen({super.key});
@@ -33,59 +37,143 @@ class AttendanceScreen extends GetView<AttendanceController> {
     Future.delayed(const Duration(seconds: 3))
         .then((result) => controller.helper.isLoading.value = false);
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Obx(() => Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: CustomFilledButton(
-                      label: "Check In",
-                      onPressed: isEnableCheckButton("Check In")
-                          ? () => controller.helper.handleTimechange(
-                                "Check In",
-                                context,
-                              )
-                          : null,
-                    ),
-                  ),
-                  Flexible(
-                    child: CustomFilledButton(
-                      label: "Check Out",
-                      onPressed: isEnableCheckButton("Check Out")
-                          ? () => controller.helper.handleTimechange(
-                                "Check Out",
-                                context,
-                              )
-                          : null,
-                    ),
-                  ),
-                ],
-              )),
-          Obx(() => Flexible(
-                child: CustomFilledButton(
-                  label: "Lain-Nya",
-                  onPressed: isEnableCheckButton("Lain-Nya")
-                      ? () => controller.helper.handleTimechange(
-                            "Lain-Nya",
-                            context,
-                          )
-                      : null,
-                ),
-              )),
-          AnimatedCrossFade(
-              firstChild: mobileScreen(),
-              secondChild: desktopScreen(),
-              crossFadeState: MediaQuery.of(context).size.width > 800
-                  ? CrossFadeState.showSecond
-                  : CrossFadeState.showFirst,
-              duration: const Duration(milliseconds: 500)),
-        ],
-      ),
-    );
+    return StreamBuilder<QuerySnapshot>(
+        stream: db
+            .collection("Timestamp")
+            .where("name", isEqualTo: cache.read("user")["name"])
+            .limit(1)
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else {
+            if (snapshot.hasData) {
+              controller.helper.isLoading.value = true;
+              controller.store.isCheckIn.value = false;
+              controller.store.isCheckOut.value = false;
+              controller.store.datetimeIn.value = "";
+              controller.store.datetimeOut.value = "";
+              controller.store.indexStatus.value = "";
+              controller.store.isAbsent.value = false;
+              for (var datas in snapshot.data!.docs) {
+                for (var timestamp in datas["timestamp"]) {
+                  if (timestamp["datetime"] != "") {
+                    final dateNow =
+                        DateFormat("yyyy-MM-dd").format(DateTime.now());
+                    final date = DateFormat("yyyy-MM-dd")
+                        .format(DateTime.parse(timestamp["datetime"]));
+                    if (date == dateNow) {
+                      if (timestamp["type"] == "Check In") {
+                        print(timestamp["datetime"]);
+                        controller.store.isCheckIn.value = true;
+                        controller.store.datetimeIn.value =
+                            timestamp["datetime"];
+                        controller.store.indexStatus.value =
+                            timestamp["alasan"] ?? "";
+                      } else if (timestamp["type"] == "Check Out") {
+                        controller.store.isCheckOut.value = true;
+                        controller.store.datetimeOut.value =
+                            timestamp["datetime"];
+                        controller.store.indexStatus.value =
+                            timestamp["alasan"];
+                      } else if (timestamp["type"] == "Lain-Nya") {
+                        controller.store.isAbsent.value = true;
+                        controller.store.datetimeIn.value = controller
+                            .store.datetimeOut.value = timestamp["datetime"];
+                        controller.store.indexStatus.value =
+                            timestamp["status"];
+                      }
+                    }
+                  }
+                }
+              }
+              print(controller.store.isCheckIn);
+              controller.helper.isLoading.value = false;
+              return StreamBuilder(
+                  stream: db
+                      .collection("Place")
+                      .where("workplace", isEqualTo: "Sumber Wringin")
+                      .snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else {
+                      if (snapshot.hasData) {
+                        controller.store.geoFencingList.value = [];
+                        for (var place in snapshot.data!.docs) {
+                          for (var geoFence in place["place"]) {
+                            final geoFencing =
+                                SquareGeoFencing.fromJson(geoFence);
+                            controller.store.geoFencingList.add(geoFencing);
+                          }
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: CustomFilledButton(
+                                      label: "Check In",
+                                      onPressed: isEnableCheckButton("Check In")
+                                          ? () => controller.helper
+                                                  .handleTimechange(
+                                                "Check In",
+                                                context,
+                                              )
+                                          : null,
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: CustomFilledButton(
+                                      label: "Check Out",
+                                      onPressed:
+                                          isEnableCheckButton("Check Out")
+                                              ? () => controller.helper
+                                                      .handleTimechange(
+                                                    "Check Out",
+                                                    context,
+                                                  )
+                                              : null,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Flexible(
+                                child: CustomFilledButton(
+                                  label: "Lain-Nya",
+                                  onPressed: isEnableCheckButton("Lain-Nya")
+                                      ? () =>
+                                          controller.helper.handleTimechange(
+                                            "Lain-Nya",
+                                            context,
+                                          )
+                                      : null,
+                                ),
+                              ),
+                              AnimatedCrossFade(
+                                  firstChild: mobileScreen(),
+                                  secondChild: desktopScreen(),
+                                  crossFadeState:
+                                      MediaQuery.of(context).size.width > 800
+                                          ? CrossFadeState.showSecond
+                                          : CrossFadeState.showFirst,
+                                  duration: const Duration(milliseconds: 500)),
+                            ],
+                          ),
+                        );
+                      }
+                    }
+                    return const CircularProgressIndicator();
+                  });
+            }
+          }
+          return const CircularProgressIndicator();
+        });
   }
 
   Widget mobileScreen() {

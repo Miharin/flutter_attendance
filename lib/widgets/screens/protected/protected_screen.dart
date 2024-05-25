@@ -29,6 +29,7 @@ class ProtectedScreen extends StatelessWidget {
               onPressed: () async {
                 await auth.signOut().then((value) => print("Logout"));
                 cache.write("userIsLogin", false);
+                cache.remove("user");
                 _isUserLogin.userIsLogin.value = false;
               },
               icon: const Icon(Icons.logout_rounded))
