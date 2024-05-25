@@ -28,9 +28,8 @@ class AttendanceHelper extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    print(await Geolocator.getCurrentPosition());
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Geolocator.requestPermission().then((permission) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      await Geolocator.requestPermission().then((permission) {
         if (permission == LocationPermission.denied ||
             permission == LocationPermission.deniedForever) {
           Get.snackbar("Lokasi Tidak Di Izinkan !", "");
