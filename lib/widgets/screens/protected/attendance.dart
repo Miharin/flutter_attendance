@@ -94,7 +94,7 @@ class AttendanceScreen extends GetView<AttendanceController> {
       children: [
         Flexible(
           child: CustomCardWithHeader(
-            header: "Checkin",
+            header: "Check In",
             children: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Obx(
@@ -111,7 +111,7 @@ class AttendanceScreen extends GetView<AttendanceController> {
         ),
         Flexible(
           child: CustomCardWithHeader(
-            header: "Checkout",
+            header: "Check Out",
             children: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Obx(
@@ -157,7 +157,7 @@ class AttendanceScreen extends GetView<AttendanceController> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 150.0),
             child: CustomCardWithHeader(
-              header: "Checkin",
+              header: "Check In",
               children: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Obx(
@@ -177,7 +177,7 @@ class AttendanceScreen extends GetView<AttendanceController> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 150.0),
             child: CustomCardWithHeader(
-              header: "Checkout",
+              header: "Check Out",
               children: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Obx(
