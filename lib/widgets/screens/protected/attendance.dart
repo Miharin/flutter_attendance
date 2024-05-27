@@ -48,13 +48,6 @@ class AttendanceScreen extends GetView<AttendanceController> {
             return const CircularProgressIndicator();
           } else {
             if (snapshot.hasData) {
-              controller.helper.isLoading.value = true;
-              controller.store.isCheckIn.value = false;
-              controller.store.isCheckOut.value = false;
-              controller.store.datetimeIn.value = "";
-              controller.store.datetimeOut.value = "";
-              controller.store.indexStatus.value = "";
-              controller.store.isAbsent.value = false;
               for (var datas in snapshot.data!.docs) {
                 for (var timestamp in datas["timestamp"]) {
                   if (timestamp["datetime"] != "") {
@@ -64,7 +57,6 @@ class AttendanceScreen extends GetView<AttendanceController> {
                         .format(DateTime.parse(timestamp["datetime"]));
                     if (date == dateNow) {
                       if (timestamp["type"] == "Check In") {
-                        print(timestamp["datetime"]);
                         controller.store.isCheckIn.value = true;
                         controller.store.datetimeIn.value =
                             timestamp["datetime"];
@@ -87,7 +79,6 @@ class AttendanceScreen extends GetView<AttendanceController> {
                   }
                 }
               }
-              print(controller.store.isCheckIn);
               controller.helper.isLoading.value = false;
               return StreamBuilder(
                   stream: db

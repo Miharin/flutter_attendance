@@ -26,23 +26,32 @@ class History extends GetView<HistoryController> {
                               "statusOutside",
                               "type",
                               "workPlaceID",
-                              "alsan",
+                              "alasan",
                             ], datalabel: [
                               {
-                                "name",
-                                "dateTime",
-                                "latitude",
-                                "Longitude",
-                                "status",
-                                "statusOutside",
-                                "type",
-                                "workPlaceID",
-                                "alsan"
+                                "name": "",
+                                "dateTime": "",
+                                "latitude": "",
+                                "Longitude": "",
+                                "status": "",
+                                "statusOutside": "",
+                                "type": "",
+                                "workPlaceID": "",
+                                "alasan": "",
                               }
                             ])
                           : CustomDataTable(
-                              title: controller.store.userDataCheck[0].keys
-                                  .toList(),
+                              title: const [
+                                "name",
+                                "dateTime",
+                                "latitude",
+                                "longitude",
+                                "status",
+                                "statusOutside",
+                                "type",
+                                "workplaceID",
+                                "alasan",
+                              ],
                               datalabel: controller.store.userDataCheck,
                             )
                     ],

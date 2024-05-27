@@ -16,9 +16,15 @@ class CustomDataTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> listtitle = title
-        .map((label) => Text(label == "nik" || label == "ID"
-            ? label.toUpperCase()
-            : label.capitalize!))
+        .map((label) => Text(label == "statusOutside"
+            ? "Status Outside"
+            : label == "dateTime"
+                ? "Date Time"
+                : label == "workplaceID"
+                    ? "Workplace ID"
+                    : label == "nik" || label == "ID"
+                        ? label.toUpperCase()
+                        : label.capitalize!))
         .toList();
     return Flexible(
       flex: 1,
@@ -49,7 +55,7 @@ class CustomDataTable extends StatelessWidget {
                     );
                   }
                   return DataCell(
-                    Text(e[title[index]] ?? ""),
+                    Text(e[title[index]] == "" ? "-" : e[title[index]] ?? "-"),
                   );
                 },
               ).toList(),

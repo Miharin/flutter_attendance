@@ -6,9 +6,11 @@ import 'package:flutter_attendance/widgets/templates/etc/appbar.dart';
 import 'package:get/get.dart';
 
 class ProtectedScreen extends StatelessWidget {
-  ProtectedScreen({super.key, required this.child, required this.title});
+  ProtectedScreen(
+      {super.key, required this.child, required this.title, this.logOutButton});
   final String title;
   final Widget child;
+  final bool? logOutButton;
 
   final CustomDrawerController _customDrawer =
       Get.put(CustomDrawerController());
@@ -25,14 +27,16 @@ class ProtectedScreen extends StatelessWidget {
           icon: const Icon(Icons.menu),
         ),
         actions: [
-          IconButton(
-              onPressed: () async {
-                await auth.signOut().then((value) => print("Logout"));
-                cache.write("userIsLogin", false);
-                cache.remove("user");
-                _isUserLogin.userIsLogin.value = false;
-              },
-              icon: const Icon(Icons.logout_rounded))
+          if (logOutButton != null && logOutButton!)
+            IconButton(
+                onPressed: () async {
+                  await auth.signOut().then((value) {
+                    cache.write("userIsLogin", false);
+                    cache.remove("user");
+                    _isUserLogin.userIsLogin.value = false;
+                  });
+                },
+                icon: const Icon(Icons.logout_rounded))
         ],
       ),
       body: child,

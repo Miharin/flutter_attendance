@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class UserModel {
   UserModel({
     required this.email,
@@ -35,7 +37,7 @@ class UserHistoryModel {
     required this.alasan,
   });
   final String name;
-  final DateTime dateTime;
+  final String dateTime;
   final double latitude;
   final double longitude;
   final String status;
@@ -48,13 +50,26 @@ class UserHistoryModel {
           Map<String, dynamic> userHistoryJSON, String name) =>
       UserHistoryModel(
         name: name,
-        dateTime: DateTime.parse(userHistoryJSON["DateTime"]),
+        dateTime: DateFormat("yyyy-MM-dd HH:mm:ss")
+            .format(DateTime.parse(userHistoryJSON["datetime"])),
         latitude: double.parse(userHistoryJSON["latitude"]),
         longitude: double.parse(userHistoryJSON["longitude"]),
         status: userHistoryJSON["status"],
-        statusOutside: userHistoryJSON["statusOutside"],
+        statusOutside: userHistoryJSON["status_outside"] ?? "",
         type: userHistoryJSON["type"],
-        workplaceID: userHistoryJSON["workplaceId"],
-        alasan: userHistoryJSON["alasan"],
+        workplaceID: userHistoryJSON["workplace_id"],
+        alasan: userHistoryJSON["alasan"] ?? "",
       );
+
+  Map<String, dynamic> toMap() => {
+        "name": name,
+        "dateTime": dateTime,
+        "latitude": latitude.toString(),
+        "longitude": longitude.toString(),
+        "status": status,
+        "statusOutside": statusOutside,
+        "type": type,
+        "workplaceID": workplaceID,
+        "alasan": alasan,
+      };
 }

@@ -30,7 +30,7 @@ class HistoryStore extends GetxController {
     final year = date.year;
 
     // Collection
-    final timeCollection = db.collection("TimeStamp");
+    final timeCollection = db.collection("Timestamp");
 
     // Query
     Future<QuerySnapshot<Map<String, dynamic>>> query;
@@ -60,30 +60,30 @@ class HistoryStore extends GetxController {
         // Looping Inside Timestamp field Where Main Data History Stored
         for (var timestampData in timestamp["timestamp"]) {
           // Change Type to DateTime from String
-          final date = DateTime.parse(timestampData["DateTime"]);
+          final date = DateTime.parse(timestampData["datetime"]);
           // If DateNow <= Date < DateThen
           if (date.month == DateTime.now().month) {
             // Adding In The UserDataCheck With User History Model Configuratuion
             if (timestampData["type"] == "Lain-Nya") {
-              userDataCheck.add({
-                "name": timestamp["name"],
-                "dateTime": DateTime.parse(timestampData["DateTime"]),
-                "latitude": double.parse(timestampData["latitude"]),
-                "longitude": double.parse(timestampData["longitude"]),
-                "status": timestampData["status"],
-                "statusOutside": "Sakit",
-                "type": timestampData["type"],
-                "workplaceID": timestampData["workplaceId"],
-                "alasan": "Sakit",
-              });
+              userDataCheck.add(
+                UserHistoryModel.fromJson({
+                  "datetime": timestampData["datetime"],
+                  "latitude": timestampData["latitude"],
+                  "longitude": timestampData["longitude"],
+                  "status": timestampData["status"],
+                  "statusOutside": "Sakit",
+                  "type": timestampData["type"],
+                  "workplace_id": timestampData["workplace_id"],
+                  "alasan": "Sakit",
+                }, timestamp["name"])
+                    .toMap(),
+              );
             } else {
               userDataCheck.add(UserHistoryModel.fromJson(
                 timestampData,
                 timestamp["name"],
-              ));
+              ).toMap());
             }
-            // Test Data
-            print(timestampData);
           }
         }
       }
