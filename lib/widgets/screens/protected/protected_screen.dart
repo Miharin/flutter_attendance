@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_attendance/store/helper/protected/drawer.helper.dart';
 import 'package:flutter_attendance/store/store/auth/auth_store.dart';
 import 'package:flutter_attendance/shared/globals.dart';
+import 'package:flutter_attendance/store/store/protected/attendance_store.dart';
 import 'package:flutter_attendance/widgets/templates/etc/appbar.dart';
 import 'package:get/get.dart';
 
@@ -34,6 +35,7 @@ class ProtectedScreen extends StatelessWidget {
                     cache.write("userIsLogin", false);
                     cache.remove("user");
                     _isUserLogin.userIsLogin.value = false;
+                    Get.delete<AttendanceStore>();
                   });
                 },
                 icon: const Icon(Icons.logout_rounded))
