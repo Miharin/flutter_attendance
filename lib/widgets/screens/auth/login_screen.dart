@@ -9,8 +9,9 @@ import 'package:get/get.dart';
 
 import 'package:flutter_attendance/widgets/templates/buttons/filled_button.dart';
 
-class LoginScreen extends GetView<AuthController> {
-  const LoginScreen({super.key});
+class LoginScreen extends StatelessWidget {
+  LoginScreen({super.key});
+  final AuthController controller = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {

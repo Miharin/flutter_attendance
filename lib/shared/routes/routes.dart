@@ -23,7 +23,7 @@ class Routes {
             logOutButton: true,
             child: AttendanceScreen(),
           )),
-          secondWidget: const AuthScreen(
+          secondWidget: AuthScreen(
             title: "Login",
             child: LoginScreen(),
           ),
@@ -39,7 +39,7 @@ class Routes {
             title: "Tabel User",
             child: TableUser(),
           )),
-          secondWidget: const AuthScreen(
+          secondWidget: AuthScreen(
             title: "Login",
             child: LoginScreen(),
           ),
@@ -55,7 +55,7 @@ class Routes {
             title: "Pendaftaran User",
             child: RegisterUser(),
           )),
-          secondWidget: const AuthScreen(
+          secondWidget: AuthScreen(
             title: "Login",
             child: LoginScreen(),
           ),
@@ -71,7 +71,7 @@ class Routes {
             title: "Tabel Tempat",
             child: TablePlace(),
           )),
-          secondWidget: const AuthScreen(
+          secondWidget: AuthScreen(
             title: "Login",
             child: LoginScreen(),
           ),
@@ -87,7 +87,7 @@ class Routes {
             title: "Pendaftaran Tempat",
             child: RegisterPlace(),
           )),
-          secondWidget: const AuthScreen(
+          secondWidget: AuthScreen(
             title: "Login",
             child: LoginScreen(),
           ),
@@ -103,7 +103,7 @@ class Routes {
             title: "History",
             child: History(),
           )),
-          secondWidget: const AuthScreen(
+          secondWidget: AuthScreen(
             title: "Login",
             child: LoginScreen(),
           ),

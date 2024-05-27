@@ -50,6 +50,12 @@ class AttendanceScreen extends StatelessWidget {
             return const CircularProgressIndicator();
           } else {
             if (snapshot.hasData) {
+              controller.store.isCheckIn.value = false;
+              controller.store.isCheckOut.value = false;
+              controller.store.isAbsent.value = false;
+              controller.store.datetimeIn.value = "";
+              controller.store.datetimeOut.value = "";
+              controller.store.indexStatus.value = "";
               for (var datas in snapshot.data!.docs) {
                 for (var timestamp in datas["timestamp"]) {
                   if (timestamp["datetime"] != "") {
