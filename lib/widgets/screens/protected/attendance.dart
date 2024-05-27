@@ -176,13 +176,11 @@ class AttendanceScreen extends GetView<AttendanceController> {
             header: "Check In",
             children: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Obx(
-                () => Text(
-                  controller.store.datetimeIn.value,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+              child: Text(
+                controller.store.datetimeIn.value,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -193,13 +191,11 @@ class AttendanceScreen extends GetView<AttendanceController> {
             header: "Check Out",
             children: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Obx(
-                () => Text(
-                  controller.store.datetimeOut.value,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+              child: Text(
+                controller.store.datetimeOut.value,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -211,13 +207,11 @@ class AttendanceScreen extends GetView<AttendanceController> {
             header: "Lain-Nya",
             children: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Obx(
-                () => Text(
-                  controller.store.indexStatus.value,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+              child: Text(
+                controller.store.indexStatus.value,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -239,13 +233,11 @@ class AttendanceScreen extends GetView<AttendanceController> {
               header: "Check In",
               children: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Obx(
-                  () => Text(
-                    controller.store.datetimeIn.value,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                child: Text(
+                  controller.store.datetimeIn.value,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -259,13 +251,11 @@ class AttendanceScreen extends GetView<AttendanceController> {
               header: "Check Out",
               children: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Obx(
-                  () => Text(
-                    controller.store.datetimeOut.value,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                child: Text(
+                  controller.store.datetimeOut.value,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -281,13 +271,11 @@ class AttendanceScreen extends GetView<AttendanceController> {
               children: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
-                  child: Obx(
-                    () => Text(
-                      controller.store.indexStatus.value,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  child: Text(
+                    controller.store.indexStatus.value,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
