@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance/store/controller/auth_controller.dart';
-import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
 
-class CustomRoutes extends GetView<AuthController> {
-  const CustomRoutes({
+class CustomRoutes extends StatelessWidget {
+  CustomRoutes({
     super.key,
     required this.firstWidget,
     required this.secondWidget,
@@ -12,6 +12,7 @@ class CustomRoutes extends GetView<AuthController> {
 
   final Widget firstWidget;
   final Widget secondWidget;
+  final AuthController controller = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,8 @@ class CustomRoutes extends GetView<AuthController> {
           if (snapshot.hasData) {
             controller.store.checkIsUserLogin(snapshot.data!.uid);
           }
+          // return Obx(() =>
+          //     controller.store.userIsLogin.value ? firstWidget : secondWidget);
           return Obx(() => AnimatedCrossFade(
                 layoutBuilder: (
                   topChild,

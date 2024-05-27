@@ -8,8 +8,15 @@ import 'package:flutter_attendance/widgets/templates/etc/card.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-class AttendanceScreen extends GetView<AttendanceController> {
+class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({super.key});
+
+  @override
+  State<AttendanceScreen> createState() => _AttendanceScreenState();
+}
+
+class _AttendanceScreenState extends State<AttendanceScreen> {
+  final AttendanceController controller = Get.put(AttendanceController());
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +94,9 @@ class AttendanceScreen extends GetView<AttendanceController> {
                       .snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      return const Text('Something went wrong');
+                    }
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     } else {

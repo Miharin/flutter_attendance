@@ -28,11 +28,9 @@ class DashboardScreen extends GetView<CustomDrawerController> {
 }
 
 class DrawerMenu extends StatelessWidget {
-  DrawerMenu({
+  const DrawerMenu({
     super.key,
   });
-
-  final String chacheRole = cache.read("user")["role"];
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +49,7 @@ class DrawerMenu extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: [
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.1,
+              height: MediaQuery.of(context).size.height * 0.15,
               child: DrawerHeader(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.onPrimary,
@@ -73,7 +71,7 @@ class DrawerMenu extends StatelessWidget {
               leading: const Icon(Icons.dashboard_rounded),
               title: const Text("Absensi"),
               onTap: () {
-                Get.toNamed("/");
+                Get.offAllNamed("/");
               },
             ),
             const CustomDivider(

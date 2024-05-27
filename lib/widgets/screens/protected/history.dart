@@ -3,8 +3,9 @@ import 'package:flutter_attendance/store/controller/history_controller.dart';
 import 'package:flutter_attendance/widgets/templates/etc/datatable.dart';
 import 'package:get/get.dart';
 
-class History extends GetView<HistoryController> {
-  const History({super.key});
+class History extends StatelessWidget {
+  History({super.key});
+  final HistoryController controller = Get.put(HistoryController());
 
   @override
   Widget build(BuildContext context) {

@@ -6,8 +6,9 @@ import 'package:flutter_attendance/widgets/templates/etc/datatable.dart';
 import 'package:flutter_attendance/widgets/templates/inputs/text_form_field.dart';
 import 'package:get/get.dart';
 
-class TableUser extends GetView<TableUserController> {
-  const TableUser({super.key});
+class TableUser extends StatelessWidget {
+  TableUser({super.key});
+  final TableUserController controller = Get.put(TableUserController());
 
   @override
   Widget build(BuildContext context) {

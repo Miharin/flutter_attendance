@@ -7,8 +7,9 @@ import 'package:flutter_attendance/widgets/templates/inputs/text_form_field.dart
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-class RegisterUser extends GetView<TableUserController> {
-  const RegisterUser({super.key});
+class RegisterUser extends StatelessWidget {
+  RegisterUser({super.key});
+  final TableUserController controller = Get.put(TableUserController());
 
   @override
   Widget build(BuildContext context) {

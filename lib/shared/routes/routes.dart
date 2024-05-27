@@ -21,7 +21,7 @@ class Routes {
               child: ProtectedScreen(
             title: "Absensi",
             logOutButton: true,
-            child: const AttendanceScreen(),
+            child: AttendanceScreen(),
           )),
           secondWidget: const AuthScreen(
             title: "Login",
