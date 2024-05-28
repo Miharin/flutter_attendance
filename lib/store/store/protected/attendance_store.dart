@@ -34,7 +34,7 @@ class AttendanceStore extends GetxController {
 
   void _getData() async {
     final isHasData = cache.read("userIsLogin");
-    if (isHasData) {
+    if (isHasData != null && isHasData) {
       final collection = db.collection("Timestamp");
       final query = collection
           .where("email", isEqualTo: cache.read("user")["email"])

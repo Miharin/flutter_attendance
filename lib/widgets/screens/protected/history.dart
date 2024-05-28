@@ -15,7 +15,7 @@ class History extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: cache.read("user")["role"] == "admin"
+        stream: cache.read("user")["role"] == "Admin"
             ? db
                 .collection("Timestamp")
                 .where(
