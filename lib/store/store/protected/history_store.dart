@@ -28,7 +28,6 @@ class HistoryStore extends GetxController {
     // Fetch This While Building Widgets
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (cache.read("userIsLogin")) {
-        print(true);
         _getData();
       }
     });
