@@ -77,7 +77,7 @@ class DrawerMenu extends StatelessWidget {
             const CustomDivider(
               space: 15.0,
             ),
-            if (cache.read("user")["role"] == "admin")
+            if (cache.read("user")["role"] == "Admin")
               ExpansionTile(
                 leading: const Icon(Icons.people_alt_rounded),
                 title: const Text("User"),
@@ -99,7 +99,7 @@ class DrawerMenu extends StatelessWidget {
                   ),
                 ],
               ),
-            if (cache.read("user")["role"] == "admin")
+            if (cache.read("user")["role"] == "Admin")
               ExpansionTile(
                 leading: const Icon(Icons.location_pin),
                 title: const Text('Lokasi'),

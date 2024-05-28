@@ -1,14 +1,19 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance/shared/globals.dart';
 import 'package:flutter_attendance/shared/models/user_model.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 class HistoryStore extends GetxController {
   // Get User Cache Role and Name
-  final String cacheRole = cache.read("user")["role"];
-  final cacheUsername = cache.read("user")["email"];
+  final String cacheRole =
+      cache.read("user") != null ? cache.read("user")["role"] : "";
+  final cacheUsername =
+      cache.read("user") != null ? cache.read("user")["email"] : "";
 
   // Data History
   final RxList userDataCheck = [].obs;
@@ -20,10 +25,12 @@ class HistoryStore extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
     // Fetch This While Building Widgets
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _getData();
+      if (cache.read("userIsLogin")) {
+        print(true);
+        _getData();
+      }
     });
   }
 
@@ -112,6 +119,23 @@ class HistoryStore extends GetxController {
     });
   }
 
+  Future makePDF() async {
+    final pdf = pw.Document();
+    pdf.addPage(pw.Page(build: (pw.Context context) {
+      return pw.Table(
+        children: userDataCheck.map((e) {
+          return pw.TableRow(children: [
+            pw.Column(
+              children: [pw.Text(e["name"])],
+            )
+          ]);
+        }).toList(),
+      );
+    }));
+    final file = File('example.pdf');
+    await file.writeAsBytes(await pdf.save());
+  }
+
   void _getData() async {
     // Date Now
     final date = DateTime.now();
@@ -142,41 +166,43 @@ class HistoryStore extends GetxController {
           )
           .get();
     }
-
-    // Logic Get Data
-    await query.then((timestamps) {
-      // Looping Timestamps if cacheRole Admin This Will Loop for a While
-      for (var timestamp in timestamps.docs) {
-        // Looping Inside Timestamp field Where Main Data History Stored
-        for (var timestampData in timestamp["timestamp"]) {
-          // Change Type to DateTime from String
-          final date = DateTime.parse(timestampData["datetime"]);
-          // If DateNow <= Date < DateThen
-          if (date.month == DateTime.now().month) {
-            // Adding In The UserDataCheck With User History Model Configuratuion
-            if (timestampData["type"] == "Lain-Nya") {
-              userDataCheck.add(
-                UserHistoryModel.fromJson({
-                  "datetime": timestampData["datetime"],
-                  "latitude": timestampData["latitude"],
-                  "longitude": timestampData["longitude"],
-                  "status": timestampData["status"],
-                  "statusOutside": "Sakit",
-                  "type": timestampData["type"],
-                  "workplace_id": timestampData["workplace_id"],
-                  "alasan": "Sakit",
-                }, timestamp["name"])
-                    .toMap(),
-              );
-            } else {
-              userDataCheck.add(UserHistoryModel.fromJson(
-                timestampData,
-                timestamp["name"],
-              ).toMap());
+    if (cache.read("userIsLogin") != null &&
+        cache.read("userIsLogin") == true) {
+      // Logic Get Data
+      await query.then((timestamps) {
+        // Looping Timestamps if cacheRole Admin This Will Loop for a While
+        for (var timestamp in timestamps.docs) {
+          // Looping Inside Timestamp field Where Main Data History Stored
+          for (var timestampData in timestamp["timestamp"]) {
+            // Change Type to DateTime from String
+            final date = DateTime.parse(timestampData["datetime"]);
+            // If DateNow <= Date < DateThen
+            if (date.month == DateTime.now().month) {
+              // Adding In The UserDataCheck With User History Model Configuratuion
+              if (timestampData["type"] == "Lain-Nya") {
+                userDataCheck.add(
+                  UserHistoryModel.fromJson({
+                    "datetime": timestampData["datetime"],
+                    "latitude": timestampData["latitude"],
+                    "longitude": timestampData["longitude"],
+                    "status": timestampData["status"],
+                    "statusOutside": "Sakit",
+                    "type": timestampData["type"],
+                    "workplace_id": timestampData["workplace_id"],
+                    "alasan": "Sakit",
+                  }, timestamp["name"])
+                      .toMap(),
+                );
+              } else {
+                userDataCheck.add(UserHistoryModel.fromJson(
+                  timestampData,
+                  timestamp["name"],
+                ).toMap());
+              }
             }
           }
         }
-      }
-    });
+      });
+    }
   }
 }

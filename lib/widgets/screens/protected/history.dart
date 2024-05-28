@@ -53,7 +53,7 @@ class History extends StatelessWidget {
                       "type": timestamp["type"],
                       "workplace_id": timestamp["workplace_id"],
                       "alasan": "Sakit",
-                    }, timestamp["name"])
+                    }, data["name"])
                         .toMap(),
                   );
                 } else {
@@ -155,7 +155,7 @@ class History extends StatelessWidget {
                                 )
                         ],
                       ),
-                    ))
+                    )),
               ],
             ),
           );

@@ -101,6 +101,7 @@ class Routes {
           firstWidget: DashboardScreen(
               child: ProtectedScreen(
             title: "History",
+            pdf: true,
             child: History(),
           )),
           secondWidget: AuthScreen(
