@@ -45,7 +45,9 @@ class CustomDropDown extends StatelessWidget {
           dropdownMenuEntries:
               list.map<DropdownMenuEntry<String>>((dynamic value) {
             return DropdownMenuEntry<String>(
-                value: value.id, label: value.name);
+              value: value.runtimeType != String ? value.id : value,
+              label: value.runtimeType != String ? value.name : value,
+            );
           }).toList(),
         ),
       ),

@@ -37,7 +37,7 @@ class AttendanceStore extends GetxController {
     if (isHasData) {
       final collection = db.collection("Timestamp");
       final query = collection
-          .where("name", isEqualTo: cache.read("user")["name"])
+          .where("email", isEqualTo: cache.read("user")["email"])
           .limit(1)
           .get();
       await query.then((datas) {
@@ -55,7 +55,7 @@ class AttendanceStore extends GetxController {
                 } else if (timestamp["type"] == "Check Out") {
                   isCheckOut.value = true;
                   datetimeOut.value = timestamp["datetime"];
-                  indexStatus.value = timestamp["alasan"];
+                  indexStatus.value = timestamp["alasan"] ?? "";
                 } else if (timestamp["type"] == "Lain-Nya") {
                   isAbsent.value = true;
                   datetimeIn.value = datetimeOut.value = timestamp["datetime"];
@@ -117,13 +117,23 @@ class AttendanceStore extends GetxController {
         timestampData["timestamp"]["alasan"] = indexAlasan.value;
       }
       final timestamp = db.collection("Timestamp");
-      final queryTimestamp =
-          timestamp.where("name", isEqualTo: timestampData["name"]).get();
+      final queryTimestamp = timestamp
+          .where(
+            Filter.and(
+              Filter("email", isEqualTo: cache.read("user")["email"]),
+              Filter("year", isEqualTo: DateTime.now().year.toString()),
+              Filter("month", isEqualTo: DateTime.now().month.toString()),
+            ),
+          )
+          .limit(1)
+          .get();
       await queryTimestamp.then((timestamp) {
         if (timestamp.docs.isEmpty) {
           db.collection("Timestamp").doc().set({
-            "name": timestampData["name"],
+            "email": cache.read("user")["email"],
+            "name": cache.read("user")["name"],
             "year": DateTime.now().year.toString(),
+            "month": DateTime.now().month.toString(),
             "last_edit": Timestamp.now(),
             "timestamp": [timestampData["timestamp"]]
           }).onError((error, stackTrace) =>
