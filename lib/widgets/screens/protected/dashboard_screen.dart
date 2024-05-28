@@ -121,13 +121,14 @@ class DrawerMenu extends StatelessWidget {
                   ),
                 ],
               ),
-            ListTile(
-              leading: const Icon(Icons.history),
-              title: const Text("History"),
-              onTap: () {
-                Get.toNamed("/History");
-              },
-            ),
+            if (cache.read("user")["role"] == "admin")
+              ListTile(
+                leading: const Icon(Icons.history),
+                title: const Text("History"),
+                onTap: () {
+                  Get.toNamed("/History");
+                },
+              ),
           ],
         ),
       ),

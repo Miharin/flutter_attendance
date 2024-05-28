@@ -45,6 +45,7 @@ class TableUser extends StatelessWidget {
                                   "Email",
                                   "Password",
                                   "Nama",
+                                  "Role",
                                   "No.Telp",
                                 ],
                                 datalabel: [
@@ -52,6 +53,7 @@ class TableUser extends StatelessWidget {
                                     "Email": "",
                                     "Password": "",
                                     "Nama": "",
+                                    "Role": "",
                                     "No.Telp": "",
                                   }
                                 ],
