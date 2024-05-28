@@ -6,6 +6,8 @@ import 'package:flutter_attendance/shared/globals.dart';
 import 'package:flutter_attendance/shared/models/user_model.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 class HistoryStore extends GetxController {
@@ -119,20 +121,27 @@ class HistoryStore extends GetxController {
   }
 
   Future makePDF() async {
-    final pdf = pw.Document();
-    pdf.addPage(pw.Page(build: (pw.Context context) {
-      return pw.Table(
-        children: userDataCheck.map((e) {
-          return pw.TableRow(children: [
-            pw.Column(
-              children: [pw.Text(e["name"])],
-            )
-          ]);
-        }).toList(),
-      );
-    }));
-    final file = File('example.pdf');
-    await file.writeAsBytes(await pdf.save());
+    try {
+      final pdf = pw.Document();
+      pdf.addPage(pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          build: (pw.Context context) {
+            return pw.Table(
+              children: userDataCheck.map((e) {
+                return pw.TableRow(children: [
+                  pw.Column(
+                    children: [pw.Text(e["name"])],
+                  )
+                ]);
+              }).toList(),
+            );
+          }));
+      final output = await getTemporaryDirectory();
+      final file = File("${output.path}/example.pdf");
+      await file.writeAsBytes(await pdf.save());
+    } catch (e) {
+      print(e);
+    }
   }
 
   void _getData() async {
