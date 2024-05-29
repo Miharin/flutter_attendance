@@ -29,9 +29,16 @@ class TableUserHelper extends GetxController {
     }
   }
 
-  handleNewTableContentOnSubmit() {
-    final TableUserStore store = Get.put(TableUserStore());
-    store.tableContent.add(addNewUser);
-    store.tableContent.refresh();
+  final RxBool disabledSubmidButton = true.obs;
+
+  handleNewTableContentOnSubmit(RxMap<String, bool> verification) {
+    if (verification["Email"]! &&
+        verification["Password"]! &&
+        verification["Nama"]! &&
+        verification["No.Telp"]!) {
+      disabledSubmidButton.value = false;
+    } else {
+      disabledSubmidButton.value = true;
+    }
   }
 }

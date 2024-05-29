@@ -28,6 +28,11 @@ class RegisterUser extends StatelessWidget {
                   keyboardType: TextInputType.emailAddress,
                   onSave: (value) => controller.helper
                       .handleAddNewtableContent("Email", value),
+                  validator: (value) =>
+                      controller.validator.validatorRegisterUSer(
+                    "Email",
+                    value ?? "",
+                  ),
                 ),
                 CustomTextFormField(
                   label: "Password",
@@ -35,6 +40,11 @@ class RegisterUser extends StatelessWidget {
                   controller: controller.helper.controller[1],
                   onSave: (value) => controller.helper
                       .handleAddNewtableContent("Password", value),
+                  validator: (value) =>
+                      controller.validator.validatorRegisterUSer(
+                    "Password",
+                    value ?? "",
+                  ),
                 ),
               ],
             ),
@@ -46,6 +56,11 @@ class RegisterUser extends StatelessWidget {
                   controller: controller.helper.controller[2],
                   onSave: (value) =>
                       controller.helper.handleAddNewtableContent("Nama", value),
+                  validator: (value) =>
+                      controller.validator.validatorRegisterUSer(
+                    "Nama",
+                    value ?? "",
+                  ),
                 ),
                 CustomTextFormField(
                   label: "No.Telp",
@@ -54,6 +69,11 @@ class RegisterUser extends StatelessWidget {
                   keyboardType: TextInputType.number,
                   onSave: (value) => controller.helper
                       .handleAddNewtableContent("No.Telp", value),
+                  validator: (value) =>
+                      controller.validator.validatorRegisterUSer(
+                    "No.Telp",
+                    value ?? "",
+                  ),
                 ),
               ],
             ),
@@ -81,11 +101,11 @@ class RegisterUser extends StatelessWidget {
             ),
             const Gap(10.0),
             CustomFilledButton(
-              label: "Submit",
-              onPressed: () {
-                controller.helper.handleSubmitAddDataContent();
+              label: "Add New User",
+              onPressed: () => {
+                controller.helper.handleSubmitAddDataContent(),
               },
-            ),
+            )
           ],
         ),
       ),
