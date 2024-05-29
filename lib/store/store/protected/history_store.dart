@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance/shared/globals.dart';
 import 'package:flutter_attendance/shared/models/user_model.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -23,6 +23,8 @@ class HistoryStore extends GetxController {
   final RxString tahun = "".obs;
   final RxString bulan = "".obs;
   final RxString name = "".obs;
+
+  static const _darkColor = PdfColors.blueGrey800;
 
   @override
   void onInit() {
@@ -123,22 +125,32 @@ class HistoryStore extends GetxController {
   Future makePDF() async {
     try {
       final pdf = pw.Document();
-      pdf.addPage(pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          build: (pw.Context context) {
-            return pw.Table(
-              children: userDataCheck.map((e) {
-                return pw.TableRow(children: [
-                  pw.Column(
-                    children: [pw.Text(e["name"])],
-                  )
-                ]);
-              }).toList(),
-            );
-          }));
-      final output = await getTemporaryDirectory();
-      final file = File("${output.path}/example.pdf");
-      await file.writeAsBytes(await pdf.save());
+      pdf.addPage(
+        pw.MultiPage(
+          orientation: pw.PageOrientation.landscape,
+          build: (pw.Context context) => [_contentHeader(context)],
+        ),
+      );
+
+      final month = List.generate(
+        12,
+        (index) => DateFormat("MMMM", "id_ID")
+            .format(DateTime(0, index + 1))
+            .toString(),
+      );
+      final outputYear =
+          tahun.value != "" ? tahun.value : DateTime.now().year.toString();
+      final outputMonth =
+          bulan.value != "" ? bulan.value : month[DateTime.now().month - 1];
+      final outputFile = await FilePicker.platform.saveFile(
+        dialogTitle: "Save Your File to Desired Location",
+        fileName: "History Absensi Pada $outputMonth $outputYear",
+      );
+      if (outputFile != null) {
+        final file = File("$outputFile.pdf");
+        await file.writeAsBytes(await pdf.save());
+        print("$outputFile.pdf");
+      }
     } catch (e) {
       print(e);
     }
@@ -212,5 +224,108 @@ class HistoryStore extends GetxController {
         }
       });
     }
+  }
+
+  pw.Widget _contentHeader(pw.Context context) {
+    const tableHeaders = [
+      "Name",
+      "Date Time",
+      "Latitude",
+      "Longitude",
+      "Status",
+      "Penyebab",
+      "Type",
+      "Tempat",
+      "Alasan",
+    ];
+    const headerWidth = [
+      100.0,
+      220.0,
+      110.0,
+      125.0,
+      100.0,
+      100.0,
+      100.0,
+      100.0,
+      double.infinity,
+    ];
+    const indexHeaders = [
+      "name",
+      "dateTime",
+      "latitude",
+      "longitude",
+      "status",
+      "statusOutside",
+      "type",
+      "workplaceID",
+      "alasan",
+    ];
+
+    return pw.TableHelper.fromTextArray(
+      border: null,
+      cellAlignment: pw.Alignment.centerLeft,
+      headerDecoration: const pw.BoxDecoration(
+        borderRadius: pw.BorderRadius.all(pw.Radius.circular(2)),
+        color: PdfColors.purple200,
+      ),
+      headerHeight: 25,
+      cellHeight: 40,
+      cellAlignments: {
+        0: pw.Alignment.centerLeft,
+        1: pw.Alignment.centerLeft,
+        2: pw.Alignment.centerLeft,
+        3: pw.Alignment.centerLeft,
+        4: pw.Alignment.centerLeft,
+        5: pw.Alignment.centerLeft,
+        6: pw.Alignment.centerLeft,
+        7: pw.Alignment.centerLeft,
+        8: pw.Alignment.centerLeft,
+      },
+      headerStyle: pw.TextStyle(
+        fontSize: 10,
+        fontWeight: pw.FontWeight.bold,
+      ),
+      cellStyle: const pw.TextStyle(
+        color: _darkColor,
+        fontSize: 10,
+      ),
+      rowDecoration: const pw.BoxDecoration(
+        border: pw.Border(
+          bottom: pw.BorderSide(
+            width: .5,
+          ),
+        ),
+      ),
+      headers: List.generate(
+        tableHeaders.length,
+        (col) => pw.SizedBox(
+          width: headerWidth[col],
+          child: pw.Text(
+            tableHeaders[col],
+          ),
+        ),
+      ),
+      data: List<List<String>>.generate(
+        userDataCheck.length,
+        (row) => List<String>.generate(
+          tableHeaders.length,
+          (col) {
+            if (indexHeaders[col] == "status") {
+              if (userDataCheck[row][indexHeaders[col]] ==
+                  "Outside Workplace") {
+                return "Diluar";
+              } else if (userDataCheck[row][indexHeaders[col]] ==
+                  "Inside Workplace") {
+                return "Masuk";
+              } else {
+                return userDataCheck[row][indexHeaders[col]];
+              }
+            } else {
+              return userDataCheck[row][indexHeaders[col]] ?? "-";
+            }
+          },
+        ),
+      ),
+    );
   }
 }
