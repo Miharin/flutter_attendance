@@ -38,6 +38,8 @@ class TableUserStore extends GetxController {
         errorMassage = "Database Timeout";
       } else if (error.code == "invalid-credential") {
         errorMassage = "Email Atau Password Salah";
+      } else {
+        errorMassage = error.toString();
       }
       Get.snackbar(
         "Penambahan User Gagal",

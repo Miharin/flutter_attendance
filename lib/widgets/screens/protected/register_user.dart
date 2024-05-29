@@ -3,6 +3,7 @@ import 'package:flutter_attendance/store/controller/table_user_controller.dart';
 import 'package:flutter_attendance/widgets/templates/buttons/choice_chip.dart';
 import 'package:flutter_attendance/widgets/templates/buttons/filled_button.dart';
 import 'package:flutter_attendance/widgets/templates/etc/card.dart';
+import 'package:flutter_attendance/widgets/templates/etc/form.dart';
 import 'package:flutter_attendance/widgets/templates/inputs/text_form_field.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -13,10 +14,13 @@ class RegisterUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: CustomCardWithHeader(
-        header: "Register",
-        children: Column(
+    return CustomCardWithHeader(
+      header: "Register",
+      children: CustomForm(
+        formKey: controller.helper.formkeyRegister,
+        onChanged: () => controller.helper.handleNewTableContentOnSubmit(
+            controller.validator.registerUserVerfication),
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
@@ -29,7 +33,7 @@ class RegisterUser extends StatelessWidget {
                   onSave: (value) => controller.helper
                       .handleAddNewtableContent("Email", value),
                   validator: (value) =>
-                      controller.validator.validatorRegisterUSer(
+                      controller.validator.validatorRegisterUser(
                     "Email",
                     value ?? "",
                   ),
@@ -41,7 +45,7 @@ class RegisterUser extends StatelessWidget {
                   onSave: (value) => controller.helper
                       .handleAddNewtableContent("Password", value),
                   validator: (value) =>
-                      controller.validator.validatorRegisterUSer(
+                      controller.validator.validatorRegisterUser(
                     "Password",
                     value ?? "",
                   ),
@@ -57,7 +61,7 @@ class RegisterUser extends StatelessWidget {
                   onSave: (value) =>
                       controller.helper.handleAddNewtableContent("Nama", value),
                   validator: (value) =>
-                      controller.validator.validatorRegisterUSer(
+                      controller.validator.validatorRegisterUser(
                     "Nama",
                     value ?? "",
                   ),
@@ -70,7 +74,7 @@ class RegisterUser extends StatelessWidget {
                   onSave: (value) => controller.helper
                       .handleAddNewtableContent("No.Telp", value),
                   validator: (value) =>
-                      controller.validator.validatorRegisterUSer(
+                      controller.validator.validatorRegisterUser(
                     "No.Telp",
                     value ?? "",
                   ),
@@ -100,12 +104,12 @@ class RegisterUser extends StatelessWidget {
               ),
             ),
             const Gap(10.0),
-            CustomFilledButton(
-              label: "Add New User",
-              onPressed: () => {
-                controller.helper.handleSubmitAddDataContent(),
-              },
-            )
+            Obx(() => CustomFilledButton(
+                  label: "Add New User",
+                  onPressed: controller.helper.disabledSubmitButton.value
+                      ? null
+                      : () => controller.helper.handleSubmitAddDataContent(),
+                )),
           ],
         ),
       ),

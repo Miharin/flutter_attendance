@@ -1,4 +1,3 @@
-import 'package:flutter_attendance/store/helper/protected/table_user_helper.dart';
 import 'package:get/get.dart';
 
 class RegisterUserValidator extends GetxController {
@@ -9,7 +8,7 @@ class RegisterUserValidator extends GetxController {
     "No.Telp": false,
   }.obs;
 
-  validatorRegisterUSer(String name, String value) {
+  validatorRegisterUser(String name, String value) {
     if (value.isNotEmpty) {
       switch (name) {
         case "Email":
@@ -43,8 +42,10 @@ class RegisterUserValidator extends GetxController {
           break;
 
         case "No.Telp":
-          if (value.length > 14 && value.length < 11) {
+          if (value.length > 14 || value.length < 11) {
+            print(true);
             handleVerification(name, false);
+            return "Nomer Telpon Wajib Diisi dan Minimal Terdiri dari 11 Digit Sampai 13 Digit";
           } else {
             handleVerification(name, true);
           }
@@ -56,7 +57,5 @@ class RegisterUserValidator extends GetxController {
   void handleVerification(String name, bool value) {
     registerUserVerfication[name] = value;
     registerUserVerfication.refresh();
-    final TableUserHelper helper = Get.put(TableUserHelper());
-    helper.handleSubmitAddDataContent();
   }
 }
