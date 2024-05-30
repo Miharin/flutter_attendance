@@ -35,7 +35,9 @@ class ProtectedScreen extends StatelessWidget {
           icon: const Icon(Icons.menu),
         ),
         actions: [
-          if (logOutButton != null && logOutButton!)
+          if (logOutButton != null &&
+              logOutButton! &&
+              cache.read("user")["role"] == "Admin")
             IconButton(
                 onPressed: () async {
                   await auth.signOut().then((value) {

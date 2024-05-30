@@ -38,7 +38,7 @@ class HistoryStore extends GetxController {
     // Fetch This While Building Widgets
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (cache.read("userIsLogin") && cache.read("userIsLogin") != null) {
-        _getData();
+        // _getData();
       }
     });
   }
@@ -106,7 +106,6 @@ class HistoryStore extends GetxController {
               "History Absensi Pada $outputMonth $outputYear - ${Platform.isAndroid ? DateTime.now() : Random().nextInt(999999)}.pdf",
         );
         if (outputFile != null) {
-          print(outputFile);
           final file = File(
               outputFile.contains(".pdf") ? outputFile : "$outputFile.pdf");
           await file.writeAsBytes(await pdf.save());
@@ -171,8 +170,10 @@ class HistoryStore extends GetxController {
               Filter("month", isEqualTo: date.month.toString()),
             ),
           )
+          .limit(1)
           .get();
     }
+    userDataCheck.value = [];
     if (cache.read("userIsLogin") != null &&
         cache.read("userIsLogin") == true) {
       // Logic Get Data
