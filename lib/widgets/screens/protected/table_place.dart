@@ -62,22 +62,6 @@ class TablePlace extends StatelessWidget {
                                   title: controller.store.tableContent[0].keys
                                       .toList(),
                                   datalabel: controller.store.tableContent,
-                                  ontap: () => showBottomSheet(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              CustomTextFormField(
-                                                label: ":D",
-                                                verification: true,
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      }),
                                 ),
                         ],
                       ),

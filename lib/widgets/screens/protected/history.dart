@@ -73,53 +73,128 @@ class History extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CustomDropDown(
-                        list: List.generate(
-                          5,
-                          (index) =>
-                              ((DateTime.now().year - 2) + index).toString(),
-                        ),
-                        label: "Tahun",
-                        verification: true,
-                        onSelected: (selected) {
-                          controller.store.tahun.value = selected!;
-                          controller.store.getFilteredData();
-                        },
-                      ),
-                      CustomDropDown(
-                        list: List.generate(
-                          12,
-                          (index) => DateFormat("MMMM", "id_ID")
-                              .format(DateTime(0, index + 1))
-                              .toString(),
-                        ),
-                        label: "Bulan",
-                        verification: true,
-                        onSelected: (selected) {
-                          controller.store.bulan.value = selected!;
-                          controller.store.getFilteredData();
-                        },
-                      ),
-                      CustomDropDown(
-                        list: name.toSet().toList(),
-                        label: "Nama",
-                        verification: true,
-                        onSelected: (selected) {
-                          controller.store.name.value = selected!;
-                          controller.store.getFilteredData();
-                        },
-                      ),
-                      CustomDropDown(
-                        list: type.toSet().toList(),
-                        label: "Type",
-                        verification: true,
-                        onSelected: (selected) {
-                          controller.store.type.value = selected!;
-                          controller.store.getFilteredData();
-                        },
-                      ),
-                    ],
+                    children: MediaQuery.of(context).size.width <= 500
+                        ? [
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minWidth:
+                                    MediaQuery.of(context).size.width * 0.9,
+                                maxWidth:
+                                    MediaQuery.of(context).size.width * 0.9,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    children: [
+                                      CustomDropDown(
+                                        list: List.generate(
+                                          5,
+                                          (index) =>
+                                              ((DateTime.now().year - 2) +
+                                                      index)
+                                                  .toString(),
+                                        ),
+                                        label: "Tahun",
+                                        verification: true,
+                                        onSelected: (selected) {
+                                          controller.store.tahun.value =
+                                              selected!;
+                                          controller.store.getFilteredData();
+                                        },
+                                      ),
+                                      CustomDropDown(
+                                        list: List.generate(
+                                          12,
+                                          (index) => DateFormat("MMMM", "id_ID")
+                                              .format(DateTime(0, index + 1))
+                                              .toString(),
+                                        ),
+                                        label: "Bulan",
+                                        verification: true,
+                                        onSelected: (selected) {
+                                          controller.store.bulan.value =
+                                              selected!;
+                                          controller.store.getFilteredData();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      CustomDropDown(
+                                        list: name.toSet().toList(),
+                                        label: "Nama",
+                                        verification: true,
+                                        onSelected: (selected) {
+                                          controller.store.name.value =
+                                              selected!;
+                                          controller.store.getFilteredData();
+                                        },
+                                      ),
+                                      CustomDropDown(
+                                        list: type.toSet().toList(),
+                                        label: "Type",
+                                        verification: true,
+                                        onSelected: (selected) {
+                                          controller.store.type.value =
+                                              selected!;
+                                          controller.store.getFilteredData();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ]
+                        : [
+                            CustomDropDown(
+                              list: List.generate(
+                                5,
+                                (index) => ((DateTime.now().year - 2) + index)
+                                    .toString(),
+                              ),
+                              label: "Tahun",
+                              verification: true,
+                              onSelected: (selected) {
+                                controller.store.tahun.value = selected!;
+                                controller.store.getFilteredData();
+                              },
+                            ),
+                            CustomDropDown(
+                              list: List.generate(
+                                12,
+                                (index) => DateFormat("MMMM", "id_ID")
+                                    .format(DateTime(0, index + 1))
+                                    .toString(),
+                              ),
+                              label: "Bulan",
+                              verification: true,
+                              onSelected: (selected) {
+                                controller.store.bulan.value = selected!;
+                                controller.store.getFilteredData();
+                              },
+                            ),
+                            CustomDropDown(
+                              list: name.toSet().toList(),
+                              label: "Nama",
+                              verification: true,
+                              onSelected: (selected) {
+                                controller.store.name.value = selected!;
+                                controller.store.getFilteredData();
+                              },
+                            ),
+                            CustomDropDown(
+                              list: type.toSet().toList(),
+                              label: "Type",
+                              verification: true,
+                              onSelected: (selected) {
+                                controller.store.type.value = selected!;
+                                controller.store.getFilteredData();
+                              },
+                            ),
+                          ],
                   ),
                 ),
                 Obx(() => Center(

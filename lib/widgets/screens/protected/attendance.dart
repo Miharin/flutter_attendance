@@ -75,7 +75,7 @@ class AttendanceScreen extends StatelessWidget {
                         controller.store.datetimeOut.value =
                             timestamp["datetime"];
                         controller.store.indexStatus.value =
-                            timestamp["alasan"];
+                            timestamp["alasan"] ?? "";
                       } else if (timestamp["type"] == "Lain-Nya") {
                         controller.store.isAbsent.value = true;
                         controller.store.datetimeIn.value = controller

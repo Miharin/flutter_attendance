@@ -58,6 +58,7 @@ class RegisterUser extends StatelessWidget {
               children: [
                 CustomTextFormField(
                   label: "Nama",
+                  keyboardType: TextInputType.name,
                   verification:
                       controller.validator.registerUserVerfication["Nama"]!,
                   controller: controller.helper.controller[2],
