@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/> 
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="flutter_attendance"
+        android:label="Absensi Sumber Wringin"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

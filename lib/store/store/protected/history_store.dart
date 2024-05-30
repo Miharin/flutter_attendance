@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -74,63 +75,64 @@ class HistoryStore extends GetxController {
   Future makePDF() async {
     var statusStorage = await Permission.storage.request();
     var statusStorage2nd = await Permission.manageExternalStorage.request();
-    if (statusStorage.isGranted && statusStorage2nd.isGranted) {
+    if (statusStorage.isDenied && statusStorage2nd.isDenied) {
+      Get.snackbar("Gagal Menyimpan", "Akses Ditolak");
+    }
+    try {
+      final pdf = pw.Document();
+      pdf.addPage(
+        pw.MultiPage(
+          orientation: pw.PageOrientation.landscape,
+          build: (pw.Context context) => [_contentHeader(context)],
+        ),
+      );
+
+      final month = List.generate(
+        12,
+        (index) => DateFormat("MMMM", "id_ID")
+            .format(DateTime(0, index + 1))
+            .toString(),
+      );
+      final outputYear =
+          tahun.value != "" ? tahun.value : DateTime.now().year.toString();
+      final outputMonth =
+          bulan.value != "" ? bulan.value : month[DateTime.now().month - 1];
+
       try {
-        final pdf = pw.Document();
-        pdf.addPage(
-          pw.MultiPage(
-            orientation: pw.PageOrientation.landscape,
-            build: (pw.Context context) => [_contentHeader(context)],
-          ),
+        final outputFile = await FilePicker.platform.saveFile(
+          dialogTitle: "Save Your File to Desired Location",
+          bytes: await pdf.save(),
+          fileName:
+              "History Absensi Pada $outputMonth $outputYear - ${Platform.isAndroid ? DateTime.now() : Random().nextInt(999999)}.pdf",
         );
-
-        final month = List.generate(
-          12,
-          (index) => DateFormat("MMMM", "id_ID")
-              .format(DateTime(0, index + 1))
-              .toString(),
-        );
-        final outputYear =
-            tahun.value != "" ? tahun.value : DateTime.now().year.toString();
-        final outputMonth =
-            bulan.value != "" ? bulan.value : month[DateTime.now().month - 1];
-
-        try {
-          final outputFile = await FilePicker.platform.saveFile(
-            dialogTitle: "Save Your File to Desired Location",
-            bytes: await pdf.save(),
-            fileName: "History Absensi Pada $outputMonth $outputYear",
+        if (outputFile != null) {
+          print(outputFile);
+          final file = File(
+              outputFile.contains(".pdf") ? outputFile : "$outputFile.pdf");
+          await file.writeAsBytes(await pdf.save());
+          Get.snackbar(
+            "Simpan Berhasil",
+            "PDF Telah Disimpan di ${outputFile.contains(".pdf") ? outputFile : "$outputFile.pdf"}",
+            duration: const Duration(seconds: 7),
           );
-          if (outputFile != null) {
-            final file = File(
-                outputFile.contains(".pdf") ? outputFile : "$outputFile.pdf");
-            await file.writeAsBytes(await pdf.save());
-            Get.snackbar(
-              "Simpan Berhasil",
-              "PDF Telah Disimpan di ${outputFile.contains(".pdf") ? outputFile : "$outputFile.pdf"}",
-              duration: const Duration(seconds: 7),
-            );
-          }
-        } catch (e) {
-          if (kIsWeb) {
-            await FileSaver.instance.saveFile(
-              name: "History Absensi Pada $outputMonth $outputYear",
-              bytes: await pdf.save(),
-              ext: "pdf",
-              mimeType: MimeType.pdf,
-            );
-            Get.snackbar(
-              "Simpan Berhasil",
-              "PDF Telah Di Download",
-              duration: const Duration(seconds: 7),
-            );
-          }
         }
       } catch (e) {
-        debugPrint(e.toString());
+        if (kIsWeb) {
+          await FileSaver.instance.saveFile(
+            name: "History Absensi Pada $outputMonth $outputYear",
+            bytes: await pdf.save(),
+            ext: "pdf",
+            mimeType: MimeType.pdf,
+          );
+          Get.snackbar(
+            "Simpan Berhasil",
+            "PDF Telah Di Download",
+            duration: const Duration(seconds: 7),
+          );
+        }
       }
-    } else {
-      debugPrint("Denied");
+    } catch (e) {
+      debugPrint(e.toString());
     }
   }
 
