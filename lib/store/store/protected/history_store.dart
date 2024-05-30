@@ -35,7 +35,7 @@ class HistoryStore extends GetxController {
     super.onInit();
     // Fetch This While Building Widgets
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (cache.read("userIsLogin")) {
+      if (cache.read("userIsLogin") && cache.read("userIsLogin") != null) {
         _getData();
       }
     });
