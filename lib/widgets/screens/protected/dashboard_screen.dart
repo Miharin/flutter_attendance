@@ -125,7 +125,7 @@ class DrawerMenu extends StatelessWidget {
               leading: const Icon(Icons.history),
               title: const Text("History"),
               onTap: () {
-                Get.toNamed("/History");
+                Get.offAllNamed("/History");
               },
             ),
           ],

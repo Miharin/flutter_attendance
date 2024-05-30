@@ -19,10 +19,12 @@ class HistoryStore extends GetxController {
 
   // Data History
   final RxList userDataCheck = [].obs;
+  final RxList userDataBackup = [].obs;
 
   final RxString tahun = "".obs;
   final RxString bulan = "".obs;
   final RxString name = "".obs;
+  final RxString type = "".obs;
 
   static const _darkColor = PdfColors.blueGrey800;
 
@@ -38,88 +40,32 @@ class HistoryStore extends GetxController {
   }
 
   void getFilteredData() async {
-    // Collection
-    final timeCollection = db.collection("Timestamp");
-
-    // Query
-    Future<QuerySnapshot<Map<String, dynamic>>> query;
-
+    userDataCheck.value = [];
     final month = List.generate(
       12,
       (index) =>
           DateFormat("MMMM", "id_ID").format(DateTime(0, index + 1)).toString(),
     );
-    if (name.value == "All") {
-      query = timeCollection
-          .where(
-            Filter.and(
-              Filter("year",
-                  isEqualTo: tahun.value != ""
-                      ? tahun.value
-                      : DateTime.now().year.toString()),
-              Filter(
-                "month",
-                isEqualTo: bulan.value != ""
-                    ? (month.indexWhere((m) => m == bulan.value) + 1).toString()
-                    : DateTime.now().month.toString(),
-              ),
-            ),
-          )
-          .get();
-    } else {
-      query = timeCollection
-          .where(
-            Filter.and(
-              Filter("year",
-                  isEqualTo: tahun.value != ""
-                      ? tahun.value
-                      : DateTime.now().year.toString()),
-              Filter("month",
-                  isEqualTo: bulan.value != ""
-                      ? (month.indexWhere((m) => m == bulan.value) + 1)
-                          .toString()
-                      : DateTime.now().month.toString()),
-              Filter("name",
-                  isEqualTo: name.value != ""
-                      ? name.value
-                      : cache.read("user")["name"]),
-            ),
-          )
-          .get();
-    }
-    userDataCheck.value = [];
-    await query.then((snapshot) {
-      for (var timestamp in snapshot.docs) {
-        for (var timestampData in timestamp["timestamp"]) {
-          // Change Type to DateTime from String
-          final date = DateTime.parse(timestampData["datetime"]);
-          // If DateNow <= Date < DateThen
-          if (date.month == DateTime.now().month) {
-            // Adding In The UserDataCheck With User History Model Configuratuion
-            if (timestampData["type"] == "Lain-Nya") {
-              userDataCheck.add(
-                UserHistoryModel.fromJson({
-                  "datetime": timestampData["datetime"],
-                  "latitude": timestampData["latitude"],
-                  "longitude": timestampData["longitude"],
-                  "status": timestampData["status"],
-                  "statusOutside": "Sakit",
-                  "type": timestampData["type"],
-                  "workplace_id": timestampData["workplace_id"],
-                  "alasan": "Sakit",
-                }, timestamp["name"])
-                    .toMap(),
-              );
-            } else {
-              userDataCheck.add(UserHistoryModel.fromJson(
-                timestampData,
-                timestamp["name"],
-              ).toMap());
-            }
-          }
-        }
-      }
-    });
+    userDataCheck.value = userDataBackup
+        .where((user) =>
+            (name.value != ""
+                ? name.value == "All"
+                    ? user["name"] != ""
+                    : user["name"] == name.value
+                : user["name"] != "") &&
+            (bulan.value != ""
+                ? (month.indexWhere((m) => m == bulan.value) + 1).toString() ==
+                    int.parse(user["dateTime"].split("-")[1]).toString()
+                : user["dateTime"] != "") &&
+            (tahun.value != ""
+                ? tahun.value == user["dateTime"].split("-")[0]
+                : user["dateTime"] != "") &&
+            (type.value != ""
+                ? type.value == "All"
+                    ? user["type"] != ""
+                    : type.value == user["type"]
+                : user["type"] != ""))
+        .toList();
   }
 
   Future makePDF() async {
@@ -147,12 +93,17 @@ class HistoryStore extends GetxController {
         fileName: "History Absensi Pada $outputMonth $outputYear",
       );
       if (outputFile != null) {
-        final file = File("$outputFile.pdf");
+        final file =
+            File(outputFile.contains(".pdf") ? outputFile : "$outputFile.pdf");
         await file.writeAsBytes(await pdf.save());
-        print("$outputFile.pdf");
+        Get.snackbar(
+          "Simpan Berhasil",
+          "PDF Telah Disimpan di ${outputFile.contains(".pdf") ? outputFile : "$outputFile.pdf"}",
+          duration: const Duration(seconds: 7),
+        );
       }
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
   }
 
@@ -170,8 +121,15 @@ class HistoryStore extends GetxController {
     Future<QuerySnapshot<Map<String, dynamic>>> query;
 
     // If Admin Get ALl Data In Database
-    if (cacheRole == "admin") {
-      query = timeCollection.where("year", isEqualTo: year.toString()).get();
+    if (cacheRole == "Admin") {
+      query = timeCollection
+          .where(
+            Filter.and(
+              Filter("year", isEqualTo: DateTime.now().year.toString()),
+              Filter("month", isEqualTo: DateTime.now().month.toString()),
+            ),
+          )
+          .get();
     }
 
     // Else Get Data Where Name == Name In Login and this Year
@@ -179,9 +137,9 @@ class HistoryStore extends GetxController {
       query = timeCollection
           .where(
             Filter.and(
-              Filter("name", isEqualTo: cacheUsername),
+              Filter("email", isEqualTo: cacheUsername),
               Filter("year", isEqualTo: year.toString()),
-              Filter("month", isEqualTo: date.month),
+              Filter("month", isEqualTo: date.month.toString()),
             ),
           )
           .get();
@@ -200,24 +158,26 @@ class HistoryStore extends GetxController {
             if (date.month == DateTime.now().month) {
               // Adding In The UserDataCheck With User History Model Configuratuion
               if (timestampData["type"] == "Lain-Nya") {
-                userDataCheck.add(
-                  UserHistoryModel.fromJson({
-                    "datetime": timestampData["datetime"],
-                    "latitude": timestampData["latitude"],
-                    "longitude": timestampData["longitude"],
-                    "status": timestampData["status"],
-                    "statusOutside": "Sakit",
-                    "type": timestampData["type"],
-                    "workplace_id": timestampData["workplace_id"],
-                    "alasan": "Sakit",
-                  }, timestamp["name"])
-                      .toMap(),
-                );
+                final userHistory = UserHistoryModel.fromJson({
+                  "datetime": timestampData["datetime"],
+                  "latitude": timestampData["latitude"],
+                  "longitude": timestampData["longitude"],
+                  "status": timestampData["status"],
+                  "statusOutside": "Sakit",
+                  "type": timestampData["type"],
+                  "workplace_id": timestampData["workplace_id"],
+                  "alasan": "Sakit",
+                }, timestamp["name"])
+                    .toMap();
+                userDataCheck.add(userHistory);
+                userDataBackup.add(userHistory);
               } else {
-                userDataCheck.add(UserHistoryModel.fromJson(
+                final userHistory = UserHistoryModel.fromJson(
                   timestampData,
                   timestamp["name"],
-                ).toMap());
+                ).toMap();
+                userDataCheck.add(userHistory);
+                userDataBackup.add(userHistory);
               }
             }
           }
@@ -230,8 +190,6 @@ class HistoryStore extends GetxController {
     const tableHeaders = [
       "Name",
       "Date Time",
-      "Latitude",
-      "Longitude",
       "Status",
       "Penyebab",
       "Type",
@@ -240,20 +198,16 @@ class HistoryStore extends GetxController {
     ];
     const headerWidth = [
       100.0,
-      220.0,
-      110.0,
-      125.0,
+      150.0,
       100.0,
       100.0,
       100.0,
       100.0,
-      double.infinity,
+      300.0,
     ];
     const indexHeaders = [
       "name",
       "dateTime",
-      "latitude",
-      "longitude",
       "status",
       "statusOutside",
       "type",
@@ -274,12 +228,10 @@ class HistoryStore extends GetxController {
         0: pw.Alignment.centerLeft,
         1: pw.Alignment.centerLeft,
         2: pw.Alignment.centerLeft,
-        3: pw.Alignment.centerLeft,
+        3: pw.Alignment.center,
         4: pw.Alignment.centerLeft,
         5: pw.Alignment.centerLeft,
         6: pw.Alignment.centerLeft,
-        7: pw.Alignment.centerLeft,
-        8: pw.Alignment.centerLeft,
       },
       headerStyle: pw.TextStyle(
         fontSize: 10,
@@ -305,23 +257,89 @@ class HistoryStore extends GetxController {
           ),
         ),
       ),
-      data: List<List<String>>.generate(
+      data: List<List>.generate(
         userDataCheck.length,
-        (row) => List<String>.generate(
+        (row) => List.generate(
           tableHeaders.length,
           (col) {
             if (indexHeaders[col] == "status") {
               if (userDataCheck[row][indexHeaders[col]] ==
                   "Outside Workplace") {
-                return "Diluar";
+                return pw.SizedBox(
+                  width: headerWidth[col],
+                  child: pw.Text(
+                    "Diluar",
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.normal,
+                    ),
+                  ),
+                );
               } else if (userDataCheck[row][indexHeaders[col]] ==
                   "Inside Workplace") {
-                return "Masuk";
+                return pw.SizedBox(
+                  width: headerWidth[col],
+                  child: pw.Text(
+                    "Masuk",
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.normal,
+                    ),
+                  ),
+                );
               } else {
-                return userDataCheck[row][indexHeaders[col]];
+                return pw.SizedBox(
+                  width: headerWidth[col],
+                  child: pw.Text(
+                    userDataCheck[row][indexHeaders[col]],
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.normal,
+                    ),
+                  ),
+                );
               }
             } else {
-              return userDataCheck[row][indexHeaders[col]] ?? "-";
+              if (indexHeaders[col] == "name") {
+                print(userDataCheck[row][indexHeaders[col]]
+                    .split(" ")
+                    .map((e) => e.toString().capitalize!)
+                    .join(" ")
+                    .toString());
+              }
+              return userDataCheck[row][indexHeaders[col]] != ""
+                  ? pw.SizedBox(
+                      width: headerWidth[col],
+                      child: pw.Text(
+                        indexHeaders[col] == "name"
+                            ? userDataCheck[row][indexHeaders[col]]
+                                .split(" ")
+                                .map((e) => e.toString().capitalize!)
+                                .join(" ")
+                                .toString()
+                            : userDataCheck[row][indexHeaders[col]],
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.normal,
+                        ),
+                        textAlign: indexHeaders[col] == "statusOutside"
+                            ? pw.TextAlign.center
+                            : pw.TextAlign.left,
+                      ),
+                    )
+                  : pw.SizedBox(
+                      width: headerWidth[col],
+                      child: pw.Text(
+                        "-",
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.normal,
+                        ),
+                        textAlign: indexHeaders[col] == "statusOutside"
+                            ? pw.TextAlign.center
+                            : pw.TextAlign.left,
+                      ),
+                    );
             }
           },
         ),

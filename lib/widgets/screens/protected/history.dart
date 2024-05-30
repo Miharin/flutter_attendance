@@ -37,11 +37,13 @@ class History extends StatelessWidget {
                 .snapshots(),
         builder: (context, snapshot) {
           final List name = ["All"];
+          final List type = ["All"];
           if (snapshot.hasData) {
             controller.store.userDataCheck.value = [];
             for (var data in snapshot.data!.docs) {
               for (var timestamp in data["timestamp"]) {
                 name.add(data["name"]);
+                type.add(timestamp["type"]);
                 if (timestamp["type"] == "Lain-Nya") {
                   controller.store.userDataCheck.add(
                     UserHistoryModel.fromJson({
@@ -105,6 +107,15 @@ class History extends StatelessWidget {
                         verification: true,
                         onSelected: (selected) {
                           controller.store.name.value = selected!;
+                          controller.store.getFilteredData();
+                        },
+                      ),
+                      CustomDropDown(
+                        list: type.toSet().toList(),
+                        label: "Type",
+                        verification: true,
+                        onSelected: (selected) {
+                          controller.store.type.value = selected!;
                           controller.store.getFilteredData();
                         },
                       ),

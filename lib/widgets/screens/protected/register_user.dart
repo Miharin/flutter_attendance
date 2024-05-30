@@ -27,7 +27,8 @@ class RegisterUser extends StatelessWidget {
               children: [
                 CustomTextFormField(
                   label: "Email",
-                  verification: true,
+                  verification:
+                      controller.validator.registerUserVerfication["Email"]!,
                   controller: controller.helper.controller[0],
                   keyboardType: TextInputType.emailAddress,
                   onSave: (value) => controller.helper
@@ -40,7 +41,8 @@ class RegisterUser extends StatelessWidget {
                 ),
                 CustomTextFormField(
                   label: "Password",
-                  verification: true,
+                  verification:
+                      controller.validator.registerUserVerfication["Password"]!,
                   controller: controller.helper.controller[1],
                   onSave: (value) => controller.helper
                       .handleAddNewtableContent("Password", value),
@@ -56,7 +58,8 @@ class RegisterUser extends StatelessWidget {
               children: [
                 CustomTextFormField(
                   label: "Nama",
-                  verification: true,
+                  verification:
+                      controller.validator.registerUserVerfication["Nama"]!,
                   controller: controller.helper.controller[2],
                   onSave: (value) =>
                       controller.helper.handleAddNewtableContent("Nama", value),
@@ -68,7 +71,8 @@ class RegisterUser extends StatelessWidget {
                 ),
                 CustomTextFormField(
                   label: "No.Telp",
-                  verification: true,
+                  verification:
+                      controller.validator.registerUserVerfication["No.Telp"]!,
                   controller: controller.helper.controller[3],
                   keyboardType: TextInputType.number,
                   onSave: (value) => controller.helper
