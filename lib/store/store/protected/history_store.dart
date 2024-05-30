@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:file_saver/file_saver.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_attendance/shared/globals.dart';
 import 'package:flutter_attendance/shared/models/user_model.dart';
@@ -88,19 +90,36 @@ class HistoryStore extends GetxController {
           tahun.value != "" ? tahun.value : DateTime.now().year.toString();
       final outputMonth =
           bulan.value != "" ? bulan.value : month[DateTime.now().month - 1];
-      final outputFile = await FilePicker.platform.saveFile(
-        dialogTitle: "Save Your File to Desired Location",
-        fileName: "History Absensi Pada $outputMonth $outputYear",
-      );
-      if (outputFile != null) {
-        final file =
-            File(outputFile.contains(".pdf") ? outputFile : "$outputFile.pdf");
-        await file.writeAsBytes(await pdf.save());
-        Get.snackbar(
-          "Simpan Berhasil",
-          "PDF Telah Disimpan di ${outputFile.contains(".pdf") ? outputFile : "$outputFile.pdf"}",
-          duration: const Duration(seconds: 7),
+
+      try {
+        final outputFile = await FilePicker.platform.saveFile(
+          dialogTitle: "Save Your File to Desired Location",
+          fileName: "History Absensi Pada $outputMonth $outputYear",
         );
+        if (outputFile != null) {
+          final file = File(
+              outputFile.contains(".pdf") ? outputFile : "$outputFile.pdf");
+          await file.writeAsBytes(await pdf.save());
+          Get.snackbar(
+            "Simpan Berhasil",
+            "PDF Telah Disimpan di ${outputFile.contains(".pdf") ? outputFile : "$outputFile.pdf"}",
+            duration: const Duration(seconds: 7),
+          );
+        }
+      } catch (e) {
+        if (kIsWeb) {
+          await FileSaver.instance.saveFile(
+            name: "History Absensi Pada $outputMonth $outputYear",
+            bytes: await pdf.save(),
+            ext: "pdf",
+            mimeType: MimeType.pdf,
+          );
+          Get.snackbar(
+            "Simpan Berhasil",
+            "PDF Telah Di Download",
+            duration: const Duration(seconds: 7),
+          );
+        }
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -300,13 +319,6 @@ class HistoryStore extends GetxController {
                 );
               }
             } else {
-              if (indexHeaders[col] == "name") {
-                print(userDataCheck[row][indexHeaders[col]]
-                    .split(" ")
-                    .map((e) => e.toString().capitalize!)
-                    .join(" ")
-                    .toString());
-              }
               return userDataCheck[row][indexHeaders[col]] != ""
                   ? pw.SizedBox(
                       width: headerWidth[col],
