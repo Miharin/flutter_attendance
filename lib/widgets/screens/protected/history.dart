@@ -35,23 +35,25 @@ class History extends StatelessWidget {
                   name.add(data["name"]);
                   type.add(timestamp["type"]);
                   if (timestamp["type"] == "Lain-Nya") {
-                    controller.store.userDataCheck.add(
-                      UserHistoryModel.fromJson({
-                        "datetime": timestamp["datetime"],
-                        "latitude": timestamp["latitude"],
-                        "longitude": timestamp["longitude"],
-                        "status": timestamp["status"],
-                        "statusOutside": "Sakit",
-                        "type": timestamp["type"],
-                        "workplace_id": timestamp["workplace_id"],
-                        "alasan": "Sakit",
-                      }, data["name"])
-                          .toMap(),
-                    );
+                    final addData = UserHistoryModel.fromJson({
+                      "datetime": timestamp["datetime"],
+                      "latitude": timestamp["latitude"],
+                      "longitude": timestamp["longitude"],
+                      "status": timestamp["status"],
+                      "statusOutside": "Sakit",
+                      "type": timestamp["type"],
+                      "workplace_id": timestamp["workplace_id"],
+                      "alasan": "Sakit",
+                    }, data["name"])
+                        .toMap();
+                    controller.store.userDataCheck.add(addData);
+                    controller.store.userDataBackup.add(addData);
                   } else {
-                    controller.store.userDataCheck.add(
+                    final addData =
                         UserHistoryModel.fromJson(timestamp, data["name"])
-                            .toMap());
+                            .toMap();
+                    controller.store.userDataCheck.add(addData);
+                    controller.store.userDataBackup.add(addData);
                   }
                 }
               }
@@ -260,23 +262,25 @@ class History extends StatelessWidget {
                   name.add(data["name"]);
                   type.add(timestamp["type"]);
                   if (timestamp["type"] == "Lain-Nya") {
-                    controller.store.userDataCheck.add(
-                      UserHistoryModel.fromJson({
-                        "datetime": timestamp["datetime"],
-                        "latitude": timestamp["latitude"],
-                        "longitude": timestamp["longitude"],
-                        "status": timestamp["status"],
-                        "statusOutside": "Sakit",
-                        "type": timestamp["type"],
-                        "workplace_id": timestamp["workplace_id"],
-                        "alasan": "Sakit",
-                      }, data["name"])
-                          .toMap(),
-                    );
+                    final addData = UserHistoryModel.fromJson({
+                      "datetime": timestamp["datetime"],
+                      "latitude": timestamp["latitude"],
+                      "longitude": timestamp["longitude"],
+                      "status": timestamp["status"],
+                      "statusOutside": "Sakit",
+                      "type": timestamp["type"],
+                      "workplace_id": timestamp["workplace_id"],
+                      "alasan": "Sakit",
+                    }, data["name"])
+                        .toMap();
+                    controller.store.userDataCheck.add(addData);
+                    controller.store.userDataBackup.add(addData);
                   } else {
-                    controller.store.userDataCheck.add(
+                    final addData =
                         UserHistoryModel.fromJson(timestamp, data["name"])
-                            .toMap());
+                            .toMap();
+                    controller.store.userDataCheck.add(addData);
+                    controller.store.userDataBackup.add(addData);
                   }
                 }
               }
