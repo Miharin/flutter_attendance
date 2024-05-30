@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_attendance/store/helper/protected/table_place_helper.dart';
+import 'package:flutter_attendance/store/controller/table_place_controller.dart';
 import 'package:flutter_attendance/widgets/templates/buttons/filled_button.dart';
 import 'package:flutter_attendance/widgets/templates/inputs/text_form_field.dart';
 import 'package:gap/gap.dart';
@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 class RegisterPlace extends StatelessWidget {
   RegisterPlace({super.key});
 
-  final tablePlaceHelper = Get.put(TablePlaceHelper());
+  final controller = Get.put(TablePlaceController());
 
   @override
   Widget build(BuildContext context) {
@@ -27,17 +27,19 @@ class RegisterPlace extends StatelessWidget {
             label: "ID",
             verification: true,
             onSave: (value) =>
-                tablePlaceHelper.handleAddNewtableContent("ID", value),
+                controller.helper.handleAddNewtableContent("ID", value),
           ),
           latitudeTextField(regExpLat),
           longitudeTextField(regExpLong),
           Flexible(
-            child: CustomFilledButton(
-              label: "Daftar",
-              onPressed: () {
-                tablePlaceHelper.handleSubmitAddDataContent();
-              },
-            ),
+            child: Obx(() => controller.helper.isLoading.value
+                ? const CircularProgressIndicator()
+                : CustomFilledButton(
+                    label: "Daftar",
+                    onPressed: () {
+                      controller.helper.handleSubmitAddDataContent();
+                    },
+                  )),
           ),
         ],
       ),
@@ -56,8 +58,8 @@ class RegisterPlace extends StatelessWidget {
             decimal: true,
           ),
           inputFormatter: [FilteringTextInputFormatter.allow(regExpLong)],
-          onSave: (value) => tablePlaceHelper.handleAddNewtableContent(
-              "LongitudeStart", value),
+          onSave: (value) => controller.helper
+              .handleAddNewtableContent("LongitudeStart", value),
         ),
         const Gap(5.0),
         CustomTextFormField(
@@ -71,7 +73,7 @@ class RegisterPlace extends StatelessWidget {
             FilteringTextInputFormatter.allow(regExpLong),
           ],
           onSave: (value) =>
-              tablePlaceHelper.handleAddNewtableContent("LongitudeEnd", value),
+              controller.helper.handleAddNewtableContent("LongitudeEnd", value),
         ),
       ],
     );
@@ -93,8 +95,8 @@ class RegisterPlace extends StatelessWidget {
               regExpLat,
             )
           ],
-          onSave: (value) =>
-              tablePlaceHelper.handleAddNewtableContent("LatitudeStart", value),
+          onSave: (value) => controller.helper
+              .handleAddNewtableContent("LatitudeStart", value),
         ),
         const Gap(5.0),
         CustomTextFormField(
@@ -110,7 +112,7 @@ class RegisterPlace extends StatelessWidget {
             )
           ],
           onSave: (value) =>
-              tablePlaceHelper.handleAddNewtableContent("LatitudeEnd", value),
+              controller.helper.handleAddNewtableContent("LatitudeEnd", value),
         ),
       ],
     );

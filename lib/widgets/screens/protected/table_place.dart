@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_attendance/shared/globals.dart';
 import 'package:flutter_attendance/store/controller/table_place_controller.dart';
 import 'package:flutter_attendance/widgets/templates/etc/datatable.dart';
-import 'package:flutter_attendance/widgets/templates/inputs/text_form_field.dart';
 import 'package:get/get.dart';
 
 class TablePlace extends StatelessWidget {
@@ -71,7 +70,7 @@ class TablePlace extends StatelessWidget {
               );
             }
           }
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         });
   }
 }

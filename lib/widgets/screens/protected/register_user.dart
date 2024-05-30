@@ -18,8 +18,7 @@ class RegisterUser extends StatelessWidget {
       header: "Register",
       children: CustomForm(
         formKey: controller.helper.formkeyRegister,
-        onChanged: () => controller.helper.handleNewTableContentOnSubmit(
-            controller.validator.registerUserVerfication),
+        onChanged: () => controller.helper.handleNewTableContentOnSubmit(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -39,19 +38,32 @@ class RegisterUser extends StatelessWidget {
                     value ?? "",
                   ),
                 ),
-                CustomTextFormField(
-                  label: "Password",
-                  verification:
-                      controller.validator.registerUserVerfication["Password"]!,
-                  controller: controller.helper.controller[1],
-                  onSave: (value) => controller.helper
-                      .handleAddNewtableContent("Password", value),
-                  validator: (value) =>
-                      controller.validator.validatorRegisterUser(
-                    "Password",
-                    value ?? "",
-                  ),
-                ),
+                Obx(() => CustomTextFormField(
+                      label: "Password",
+                      obscureText: controller.helper.obscureTextPassword.value,
+                      verification: controller
+                          .validator.registerUserVerfication["Password"]!,
+                      controller: controller.helper.controller[1],
+                      onSave: (value) => controller.helper
+                          .handleAddNewtableContent("Password", value),
+                      validator: (value) =>
+                          controller.validator.validatorRegisterUser(
+                        "Password",
+                        value ?? "",
+                      ),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          controller.helper.handleObscureText();
+                        },
+                        icon: controller.helper.obscureTextPassword.value
+                            ? const Icon(
+                                Icons.visibility,
+                              )
+                            : const Icon(
+                                Icons.visibility_off,
+                              ),
+                      ),
+                    )),
               ],
             ),
             Row(
@@ -109,12 +121,14 @@ class RegisterUser extends StatelessWidget {
               ),
             ),
             const Gap(10.0),
-            Obx(() => CustomFilledButton(
-                  label: "Add New User",
-                  onPressed: controller.helper.disabledSubmitButton.value
-                      ? null
-                      : () => controller.helper.handleSubmitAddDataContent(),
-                )),
+            Obx(() => controller.helper.isLoading.value
+                ? const CircularProgressIndicator()
+                : CustomFilledButton(
+                    label: "Add New User",
+                    onPressed: controller.helper.disabledSubmitButton.value
+                        ? null
+                        : () => controller.helper.handleSubmitAddDataContent(),
+                  )),
           ],
         ),
       ),

@@ -20,7 +20,7 @@ class DashboardScreen extends GetView<CustomDrawerController> {
         style: DrawerStyle.defaultStyle,
         drawerShadowsBackgroundColor: Colors.grey[300]!,
         slideWidth: 300,
-        menuScreen: DrawerMenu(),
+        menuScreen: const DrawerMenu(),
         mainScreen: child,
       );
     });
