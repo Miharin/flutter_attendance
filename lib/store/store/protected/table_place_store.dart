@@ -24,6 +24,7 @@ class TablePlaceStore extends GetxController {
                 "Gagal Menyimpan !",
                 "Tempat Dengan Nama ${addNewTableContent["ID"]} Sudah Ada",
               );
+              break;
             } else {
               db.collection("Place").doc(place.id).update({
                 "place": FieldValue.arrayUnion([addNewTableContent])
@@ -32,6 +33,7 @@ class TablePlaceStore extends GetxController {
                 "Berhasil Menyimpan",
                 "Tempat Dengan Nama ${addNewTableContent["ID"]} Telah Ditambahkan",
               );
+              break;
             }
           }
         }
