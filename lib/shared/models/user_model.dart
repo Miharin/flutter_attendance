@@ -35,6 +35,7 @@ class UserHistoryModel {
     required this.type,
     required this.workplaceID,
     required this.alasan,
+    required this.statusLate,
   });
   final String name;
   final String dateTime;
@@ -45,6 +46,7 @@ class UserHistoryModel {
   final String type;
   final String workplaceID;
   final String alasan;
+  final String statusLate;
 
   factory UserHistoryModel.fromJson(
           Map<String, dynamic> userHistoryJSON, String name) =>
@@ -59,6 +61,7 @@ class UserHistoryModel {
         type: userHistoryJSON["type"],
         workplaceID: userHistoryJSON["workplace_id"],
         alasan: userHistoryJSON["alasan"] ?? "",
+        statusLate: userHistoryJSON["statusLate"].toString(),
       );
 
   Map<String, dynamic> toMap() => {

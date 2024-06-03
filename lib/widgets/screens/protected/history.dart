@@ -44,6 +44,7 @@ class History extends StatelessWidget {
                       "type": timestamp["type"],
                       "workplace_id": timestamp["workplace_id"],
                       "alasan": "Sakit",
+                      "statusLate": "",
                     }, data["name"])
                         .toMap();
                     controller.store.userDataCheck.add(addData);
@@ -229,6 +230,7 @@ class History extends StatelessWidget {
                                       "type",
                                       "workplaceID",
                                       "alasan",
+                                      "Status Masuk"
                                     ],
                                     datalabel: controller.store.userDataCheck,
                                   )
