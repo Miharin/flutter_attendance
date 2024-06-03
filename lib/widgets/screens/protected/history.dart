@@ -19,10 +19,8 @@ class History extends StatelessWidget {
           stream: db
               .collection("Timestamp")
               .where(
-                Filter.and(
-                  Filter("year", isEqualTo: DateTime.now().year.toString()),
-                  Filter("month", isEqualTo: DateTime.now().month.toString()),
-                ),
+                "year",
+                isEqualTo: DateTime.now().year.toString(),
               )
               .snapshots(),
           builder: (context, snapshot) {

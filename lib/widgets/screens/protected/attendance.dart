@@ -42,7 +42,10 @@ class AttendanceScreen extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
         stream: db
             .collection("Timestamp")
-            .where("email", isEqualTo: cache.read("user")["email"])
+            .where(Filter.and(
+              Filter("email", isEqualTo: cache.read("user")["email"]),
+              Filter("month", isEqualTo: DateTime.now().month.toString()),
+            ))
             .limit(1)
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
