@@ -28,7 +28,7 @@ class AttendanceScreen extends StatelessWidget {
           if (isLoading || (!isLoading && isCheckOut) || isAbsent) return false;
           return true;
         case "Lain-Nya":
-          if (isLoading || isAbsent || isCheckIn || isCheckOut) return false;
+          if (isLoading || isAbsent || isCheckIn) return false;
           return true;
         default:
       }
@@ -79,11 +79,12 @@ class AttendanceScreen extends StatelessWidget {
                 final countLainnya = searchToday
                     .where((data) => data["type"] == "Lain-Nya")
                     .length;
+                print([countCheckIn, countCheckOut]);
 
                 if (countCheckIn != 0) {
                   if (countCheckIn == 2 ||
                       (countCheckIn == 1 && countLainnya == 1) ||
-                      (countCheckIn == 1 && countCheckOut == 0)) {
+                      (countCheckIn > countCheckOut)) {
                     controller.store.isCheckIn.value = true;
                   }
                   for (var element in searchToday
@@ -95,7 +96,8 @@ class AttendanceScreen extends StatelessWidget {
                 }
                 if (countCheckOut != 0) {
                   if (countCheckOut == 2 ||
-                      (countCheckOut == 1 && countLainnya == 1)) {
+                      (countCheckOut == 1 && countLainnya == 1) ||
+                      countCheckOut == countCheckIn) {
                     controller.store.isCheckOut.value = true;
                   }
                   for (var element in searchToday
