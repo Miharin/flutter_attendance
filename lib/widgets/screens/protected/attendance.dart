@@ -79,7 +79,6 @@ class AttendanceScreen extends StatelessWidget {
                 final countLainnya = searchToday
                     .where((data) => data["type"] == "Lain-Nya")
                     .length;
-                print([countCheckIn, countCheckOut]);
 
                 if (countCheckIn != 0) {
                   if (countCheckIn == 2 ||
