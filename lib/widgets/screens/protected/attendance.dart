@@ -60,35 +60,91 @@ class AttendanceScreen extends StatelessWidget {
               controller.store.datetimeOut.value = "";
               controller.store.indexStatus.value = "";
               for (var datas in snapshot.data!.docs) {
-                for (var timestamp in datas["timestamp"]) {
-                  if (timestamp["datetime"] != "") {
-                    final dateNow =
-                        DateFormat("yyyy-MM-dd").format(DateTime.now());
-                    final date = DateFormat("yyyy-MM-dd")
-                        .format(DateTime.parse(timestamp["datetime"]));
-                    if (date == dateNow) {
-                      if (timestamp["type"] == "Check In") {
-                        controller.store.isCheckIn.value = true;
-                        controller.store.datetimeIn.value =
-                            timestamp["datetime"];
-                        controller.store.indexStatus.value =
-                            timestamp["alasan"] ?? "";
-                      } else if (timestamp["type"] == "Check Out") {
-                        controller.store.isCheckOut.value = true;
-                        controller.store.datetimeOut.value =
-                            timestamp["datetime"];
-                        controller.store.indexStatus.value =
-                            timestamp["alasan"] ?? "";
-                      } else if (timestamp["type"] == "Lain-Nya") {
-                        controller.store.isAbsent.value = true;
-                        controller.store.datetimeIn.value = controller
-                            .store.datetimeOut.value = timestamp["datetime"];
-                        controller.store.indexStatus.value =
-                            timestamp["status"];
-                      }
-                    }
+                final List time = datas["timestamp"];
+                final searchToday = time.where(
+                  (data) =>
+                      data["datetime"] != "" &&
+                      DateFormat("yyyy-MM-dd").format(DateTime.now()) ==
+                          DateFormat("yyyy-MM-dd")
+                              .format(DateTime.parse(data["datetime"])),
+                );
+                final countCheckIn = searchToday
+                    .where((data) => data["type"] == "Check In")
+                    .length;
+
+                final countCheckOut = searchToday
+                    .where((data) => data["type"] == "Check Out")
+                    .length;
+
+                final countLainnya = searchToday
+                    .where((data) => data["type"] == "Lain-Nya")
+                    .length;
+
+                if (countCheckIn != 0) {
+                  if (countCheckIn == 2 ||
+                      (countCheckIn == 1 && countLainnya == 1) ||
+                      (countCheckIn == 1 && countCheckOut == 0)) {
+                    controller.store.isCheckIn.value = true;
+                  }
+                  for (var element in searchToday
+                      .where((data) => data["type"] == "Check In")) {
+                    controller.store.datetimeIn.value = element["datetime"];
+                    controller.store.indexStatus.value =
+                        element["alasan"] ?? "";
                   }
                 }
+                if (countCheckOut != 0) {
+                  if (countCheckOut == 2 ||
+                      (countCheckOut == 1 && countLainnya == 1)) {
+                    controller.store.isCheckOut.value = true;
+                  }
+                  for (var element in searchToday
+                      .where((data) => data["type"] == "Check Out")) {
+                    controller.store.datetimeOut.value = element["datetime"];
+                    controller.store.indexStatus.value =
+                        element["alasan"] ?? "";
+                  }
+                }
+                if (countLainnya != 0) {
+                  if (countLainnya == 2) {
+                    controller.store.isAbsent.value = true;
+                  }
+                  for (var element in searchToday
+                      .where((data) => data["type"] == "Lain-Nya")) {
+                    controller.store.datetimeOut.value = element["datetime"];
+                    controller.store.indexStatus.value =
+                        element["status"] ?? "";
+                  }
+                }
+                // for (var timestamp in datas["timestamp"]) {
+                //   if (timestamp["datetime"] != "") {
+                //     final dateNow =
+                //         DateFormat("yyyy-MM-dd").format(DateTime.now());
+                //     final date = DateFormat("yyyy-MM-dd")
+                //         .format(DateTime.parse(timestamp["datetime"]));
+                //     if (date == dateNow) {
+                //       if (timestamp["type"] == "Check In") {
+                //         controller.store.isCheckIn.value = true;
+                //         controller.store.datetimeIn.value =
+                //             timestamp["datetime"];
+                //         controller.store.indexStatus.value =
+                //             timestamp["alasan"] ?? "";
+                //       } else if (timestamp["type"] == "Check Out") {
+                //         controller.store.isCheckOut.value = true;
+                //         controller.store.datetimeOut.value =
+                //             timestamp["datetime"];
+                //         controller.store.indexStatus.value =
+                //             timestamp["alasan"] ?? "";
+                //       } else if (timestamp["type"] == "Lain-Nya") {
+                //         controller.store.isAbsent.value = true;
+                //         controller.store.datetimeIn.value = controller
+                //             .store.datetimeOut.value = timestamp["datetime"];
+                //         controller.store.indexStatus.value =
+                //             timestamp["status"];
+                //       }
+                //     }
+                //   }
+                // }
               }
               controller.helper.isLoading.value = false;
               return StreamBuilder(
