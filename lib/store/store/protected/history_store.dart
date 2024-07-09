@@ -80,6 +80,7 @@ class HistoryStore extends GetxController {
       final pdf = pw.Document();
       pdf.addPage(
         pw.MultiPage(
+          maxPages: 100,
           orientation: pw.PageOrientation.landscape,
           build: (pw.Context context) => [_contentHeader(context)],
         ),
@@ -162,6 +163,85 @@ class HistoryStore extends GetxController {
       "alasan",
     ];
 
+    var list = List<List>.generate(
+      userDataCheck.length,
+      (row) => List.generate(
+        tableHeaders.length,
+        (col) {
+          if (indexHeaders[col] == "status") {
+            if (userDataCheck[row][indexHeaders[col]] == "Outside Workplace") {
+              return pw.SizedBox(
+                width: headerWidth[col],
+                child: pw.Text(
+                  "Diluar",
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.normal,
+                  ),
+                ),
+              );
+            } else if (userDataCheck[row][indexHeaders[col]] ==
+                "Inside Workplace") {
+              return pw.SizedBox(
+                width: headerWidth[col],
+                child: pw.Text(
+                  "Masuk",
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.normal,
+                  ),
+                ),
+              );
+            } else {
+              return pw.SizedBox(
+                width: headerWidth[col],
+                child: pw.Text(
+                  userDataCheck[row][indexHeaders[col]],
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.normal,
+                  ),
+                ),
+              );
+            }
+          } else {
+            return userDataCheck[row][indexHeaders[col]] != ""
+                ? pw.SizedBox(
+                    width: headerWidth[col],
+                    child: pw.Text(
+                      indexHeaders[col] == "name"
+                          ? userDataCheck[row][indexHeaders[col]]
+                              .split(" ")
+                              .map((e) => e.toString().capitalize!)
+                              .join(" ")
+                              .toString()
+                          : userDataCheck[row][indexHeaders[col]],
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.normal,
+                      ),
+                      textAlign: indexHeaders[col] == "statusOutside"
+                          ? pw.TextAlign.center
+                          : pw.TextAlign.left,
+                    ),
+                  )
+                : pw.SizedBox(
+                    width: headerWidth[col],
+                    child: pw.Text(
+                      "-",
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.normal,
+                      ),
+                      textAlign: indexHeaders[col] == "statusOutside"
+                          ? pw.TextAlign.center
+                          : pw.TextAlign.left,
+                    ),
+                  );
+          }
+        },
+      ),
+    );
     return pw.TableHelper.fromTextArray(
       border: null,
       cellAlignment: pw.Alignment.centerLeft,
@@ -204,86 +284,7 @@ class HistoryStore extends GetxController {
           ),
         ),
       ),
-      data: List<List>.generate(
-        userDataCheck.length,
-        (row) => List.generate(
-          tableHeaders.length,
-          (col) {
-            if (indexHeaders[col] == "status") {
-              if (userDataCheck[row][indexHeaders[col]] ==
-                  "Outside Workplace") {
-                return pw.SizedBox(
-                  width: headerWidth[col],
-                  child: pw.Text(
-                    "Diluar",
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.normal,
-                    ),
-                  ),
-                );
-              } else if (userDataCheck[row][indexHeaders[col]] ==
-                  "Inside Workplace") {
-                return pw.SizedBox(
-                  width: headerWidth[col],
-                  child: pw.Text(
-                    "Masuk",
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.normal,
-                    ),
-                  ),
-                );
-              } else {
-                return pw.SizedBox(
-                  width: headerWidth[col],
-                  child: pw.Text(
-                    userDataCheck[row][indexHeaders[col]],
-                    style: pw.TextStyle(
-                      fontSize: 10,
-                      fontWeight: pw.FontWeight.normal,
-                    ),
-                  ),
-                );
-              }
-            } else {
-              return userDataCheck[row][indexHeaders[col]] != ""
-                  ? pw.SizedBox(
-                      width: headerWidth[col],
-                      child: pw.Text(
-                        indexHeaders[col] == "name"
-                            ? userDataCheck[row][indexHeaders[col]]
-                                .split(" ")
-                                .map((e) => e.toString().capitalize!)
-                                .join(" ")
-                                .toString()
-                            : userDataCheck[row][indexHeaders[col]],
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.normal,
-                        ),
-                        textAlign: indexHeaders[col] == "statusOutside"
-                            ? pw.TextAlign.center
-                            : pw.TextAlign.left,
-                      ),
-                    )
-                  : pw.SizedBox(
-                      width: headerWidth[col],
-                      child: pw.Text(
-                        "-",
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          fontWeight: pw.FontWeight.normal,
-                        ),
-                        textAlign: indexHeaders[col] == "statusOutside"
-                            ? pw.TextAlign.center
-                            : pw.TextAlign.left,
-                      ),
-                    );
-            }
-          },
-        ),
-      ),
+      data: list,
     );
   }
 }

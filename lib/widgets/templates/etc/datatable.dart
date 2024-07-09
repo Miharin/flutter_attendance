@@ -28,41 +28,63 @@ class CustomDataTable extends StatelessWidget {
         .toList();
     return Flexible(
       flex: 1,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          sortColumnIndex: 0,
-          sortAscending: true,
-          showCheckboxColumn: false,
-          columns: listtitle.map((title) => DataColumn(label: title)).toList(),
-          rows: datalabel.map((e) {
-            return DataRow(
-              onSelectChanged: (bool? selected) {
-                if (selected! && ontap != null) {
-                  ontap!();
-                }
-              },
-              cells: List.generate(
-                title.length,
-                (index) {
-                  if (title[index] == "password") {
-                    final password =
-                        List.generate(e[title[index]].length, (index) => "*")
-                            .toList()
-                            .join();
-                    return DataCell(
-                      Text(password),
-                    );
-                  }
-                  return DataCell(
-                    Text(e[title[index]] == "" ? "-" : e[title[index]] ?? "-"),
-                  );
-                },
-              ).toList(),
-            );
-          }).toList(),
-        ),
+      child: PaginatedDataTable(
+        rowsPerPage: 25,
+        sortColumnIndex: 0,
+        sortAscending: true,
+        showCheckboxColumn: false,
+        columns: listtitle.map((title) => DataColumn(label: title)).toList(),
+        source: _DataSource(data: datalabel, context: context, title: title),
       ),
     );
   }
+}
+
+class _DataSource extends DataTableSource {
+  final List data;
+  final List title;
+  final BuildContext context;
+
+  _DataSource({
+    required this.data,
+    required this.context,
+    required this.title,
+  });
+
+  @override
+  DataRow? getRow(int index) {
+    if (index >= data.length) {
+      return null;
+    }
+
+    final item = data[index];
+    return DataRow(
+      cells: List.generate(
+        title.length,
+        (index) {
+          if (title[index] == "password") {
+            final password =
+                List.generate(item[title[index]].length, (index) => "*")
+                    .toList()
+                    .join();
+            return DataCell(
+              Text(password),
+            );
+          }
+          return DataCell(
+            Text(item[title[index]] == "" ? "-" : item[title[index]] ?? "-"),
+          );
+        },
+      ),
+    );
+  }
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get rowCount => data.length;
+
+  @override
+  int get selectedRowCount => 0;
 }

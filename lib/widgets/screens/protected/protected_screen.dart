@@ -51,9 +51,17 @@ class ProtectedScreen extends StatelessWidget {
       ),
       body: child,
       floatingActionButton: pdf != null && pdf!
-          ? FloatingActionButton(
-              onPressed: () => _store.makePDF(),
-              child: const Icon(Icons.picture_as_pdf_rounded),
+          ? Stack(
+              alignment: AlignmentDirectional.bottomCenter,
+              children: [
+                Positioned(
+                  bottom: 0,
+                  child: FloatingActionButton(
+                    onPressed: () => _store.makePDF(),
+                    child: const Icon(Icons.picture_as_pdf_rounded),
+                  ),
+                ),
+              ],
             )
           : null,
     );
