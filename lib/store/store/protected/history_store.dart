@@ -80,7 +80,7 @@ class HistoryStore extends GetxController {
       final pdf = pw.Document();
       pdf.addPage(
         pw.MultiPage(
-          maxPages: 100,
+          maxPages: 300,
           orientation: pw.PageOrientation.landscape,
           build: (pw.Context context) => [_contentHeader(context)],
         ),
